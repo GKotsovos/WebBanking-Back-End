@@ -18,9 +18,7 @@ namespace WebBanking.Services
 
         public List<TransactionHistory> GetProductTransactionHistory(string productId)
         {
-            var transactionHistory = transactionHistoryManager.GetTransactionHistoryByProductId(productId);
-            transactionHistory.Reverse();
-            return transactionHistory;
+            return transactionHistoryManager.GetTransactionHistoryByProductId(productId);
         }
 
         public IEnumerable<TransactionHistory> GetAllCustomerTransactionHistory(string customerId)
