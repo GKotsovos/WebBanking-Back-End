@@ -48,6 +48,7 @@ namespace WebBanking.WebAPI.Controllers
         public void CreditCardPayment(CreditCardPaymentDetails creditCardPaymentDetails)
         {
             cardServices.CreditCardPayment(GetCustomerId(), creditCardPaymentDetails);
+            //HttpContext.Response.StatusCode = 400;
         }
 
         // POST api/values

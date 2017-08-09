@@ -77,7 +77,7 @@ namespace WebBanking.TokenProvider
             var identity = await _options.IdentityResolver(userId, password);
             if (identity == null)
             {
-                context.Response.StatusCode = 400;
+                context.Response.StatusCode = 401;
                 //context.Response.ContentType = "application/json";
                 //context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
                 //await context.Response.WriteAsync("Λάθος ID χρήστη ή κωδικός.");
