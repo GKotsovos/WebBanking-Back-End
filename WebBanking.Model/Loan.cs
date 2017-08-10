@@ -16,5 +16,7 @@ namespace WebBanking.Model
         public decimal NextInstallmentAmount { get; set; }
         public decimal AvailableBalance { get; set; }
         public decimal Debt { get; set; }
+        public string CustomTitle { get; set; }
+        public decimal RepaymentBalance { get; set; }
     }
 }

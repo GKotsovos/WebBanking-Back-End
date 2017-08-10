@@ -194,6 +194,7 @@ namespace WebBanking.DAL
                     .IsRequired()
                     .HasColumnType("varchar(3)");
 
+                entity.Property(e => e.CustomTitle).HasMaxLength(300);
                 entity.Property(e => e.CustomerId)
                     .IsRequired()
                     .HasColumnType("varchar(11)");
@@ -207,6 +208,10 @@ namespace WebBanking.DAL
                 entity.Property(e => e.NextInstallmentAmount).HasColumnType("decimal");
 
                 entity.Property(e => e.NextInstallmentDate).HasColumnType("date");
+
+                entity.Property(e => e.RepaymentBalance)
+                    .HasColumnType("decimal")
+                    .HasDefaultValueSql("0");
 
                 entity.Property(e => e.RepaymentDate).HasColumnType("date");
 
