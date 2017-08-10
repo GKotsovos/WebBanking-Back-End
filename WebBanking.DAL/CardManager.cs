@@ -17,6 +17,15 @@ namespace WebBanking.DAL
             }
         }
 
+        public List<LinkedProducts> GetDebitCardLinkedProducts(string cardId)
+        {
+            using (var bankContext = new BankingContext())
+            {
+                return bankContext.LinkedProducts
+                    .Where(linkedProduct => linkedProduct.CardId == cardId).ToList();
+            }
+        }
+
         public List<DebitCard> GetAllCustomerDebitCards(string customerId)
         {
             using (var bankContext = new BankingContext())
