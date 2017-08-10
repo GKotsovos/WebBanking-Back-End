@@ -23,6 +23,24 @@ namespace WebBanking.WebAPI.Controllers
             cardServices = new CardServices();
         }
 
+        [HttpGet("GetDebitCardWithLinkedProductsById/{id}")]
+        public DebitCardWithLinkedProducts GetDebitCardWithLinkedProductsById(string id)
+        {
+            return cardServices.GetDebitCardWithLinkedProducts(id);
+        }
+
+        [HttpGet("GetCreditCardById/{id}")]
+        public CreditCard GetCreditCardById(string id)
+        {
+            return cardServices.GetCreditCardById(id);
+        }
+
+        [HttpGet("GetPrepaidCardById/{id}")]
+        public PrepaidCard GetPrepaidCardById(string id)
+        {
+            return cardServices.GetPrePaidCardById(id);
+        }
+
         [HttpGet("GetAllCustomerCards")]
         public Cards GetAllCustomerCards()
         {
