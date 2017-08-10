@@ -21,8 +21,8 @@ namespace WebBanking.WebAPI.Controllers
             accountServices = new AccountServices();
         }
 
-        [HttpGet("GetAccount/{id}")]
-        public Account GetAccount(string id)
+        [HttpGet("GetAccountById/{id}")]
+        public Account GetAccountById(string id)
         {
             return accountServices.GetAccountByIban(id);
         }

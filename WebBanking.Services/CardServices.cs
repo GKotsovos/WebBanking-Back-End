@@ -59,7 +59,7 @@ namespace WebBanking.Services
             cardManager.DeleteLinkedProduct(cardId, productId);
         }
 
-        public CreditCard GetCreditCard(string cardId)
+        public CreditCard GetCreditCardById(string cardId)
         {
             return cardManager.GetCreditCardById(cardId);
         }
@@ -113,7 +113,7 @@ namespace WebBanking.Services
             return cardManager.GetAllCustomerCreditCards(customerId);
         }
 
-        public PrepaidCard GetPrePaidCard(string cardId)
+        public PrepaidCard GetPrePaidCardById(string cardId)
         {
             return cardManager.GetPrepaidCardById(cardId);
         }
