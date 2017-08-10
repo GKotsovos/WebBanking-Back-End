@@ -38,9 +38,6 @@ namespace WebBanking.WebAPI.Controllers
         [HttpGet("GetAllCustomerDebitCardsLinkedProducts")]
         public List<DebitCardWithLinkedProducts> GetAllCustomerDebitCardsLinkedProducts()
         {
-            //Response.ContentType = "application/json";
-            //Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
-            //Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             return cardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
         }
 
@@ -48,7 +45,6 @@ namespace WebBanking.WebAPI.Controllers
         public void CreditCardPayment(CreditCardPaymentDetails creditCardPaymentDetails)
         {
             cardServices.CreditCardPayment(GetCustomerId(), creditCardPaymentDetails);
-            //HttpContext.Response.StatusCode = 400;
         }
 
         // POST api/values

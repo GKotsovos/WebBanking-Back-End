@@ -39,17 +39,6 @@ namespace WebBanking.DAL
 
         public List<LinkedProducts> GetAllCustomerDebitCardsLinkedProducts(string customerId)
         {
-            //using (var bankContext = new BankingContext())
-            //{
-            //    return (from debitCard in bankContext.DebitCard
-            //            join linkedProduct in bankContext.LinkedProducts
-            //                on debitCard.Id equals linkedProduct.CardId
-            //            where debitCard.CustomerId == customerId
-            //            group linkedProduct by debitCard.Id into result
-            //            select new DebitCardWithLinkedProducts(result.Key, result.Select(product => product.ProductId).ToList()))
-            //            .ToList();
-            //}
-
             using (var bankContext = new BankingContext())
             {
                 return bankContext.LinkedProducts

@@ -30,11 +30,6 @@ namespace WebBanking.Services
             return new DebitCardWithLinkedProducts(debitCard, linkedProducts);
         }
 
-        //public List<DebitCard> GetAllCustomerDebitCards(string customerId)
-        //{
-        //    return cardManager.GetAllCustomerDebitCards(customerId);
-        //}
-
         public List<DebitCardWithLinkedProducts> GetAllCustomerDebitCardsLinkedProducts(string customerId)
         {
             var debitCards = cardManager.GetAllCustomerDebitCards(customerId);
