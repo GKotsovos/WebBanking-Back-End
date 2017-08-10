@@ -20,9 +20,14 @@ namespace WebBanking.Services
             transactionHistoryService = new TransactionHistoryService();
         }
 
-        public DebitCard GetDebitCard(string cardId)
+        public DebitCardWithLinkedProducts GetDebitCardWithLinkedProducts(string cardId)
         {
-            return cardManager.GetDebitCardById(cardId);
+            var debitCard = cardManager.GetDebitCardById(cardId);
+            var linkedProducts = cardManager
+                .GetDebitCardLinkedProducts(cardId)
+                .Select(linkedProduct => accountServices.GetAccountByIban(linkedProduct.ProductId))
+                .ToList();
+            return new DebitCardWithLinkedProducts(debitCard, linkedProducts);
         }
 
         //public List<DebitCard> GetAllCustomerDebitCards(string customerId)
