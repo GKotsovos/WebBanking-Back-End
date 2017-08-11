@@ -17,8 +17,10 @@ namespace WebBanking.Services
         }
 
         public Loan GetLoan(string accountId)
+        public Loan GetLoan(string loanId)
         {
             return accountMamager.GetLoanById(accountId);
+            return loanManager.GetLoanById(loanId);
         }
 
         public List<Loan> GetAllCustomerLoans(string customerId)

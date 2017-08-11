@@ -21,6 +21,12 @@ namespace WebBanking.WebAPI.Controllers
             loanServices = new LoanServices();
         }
 
+        [HttpGet("GetLoanById/{id}")]
+        public Loan GetLoanById(string id)
+        {
+            return loanServices.GetLoan(id);
+        }
+
         [HttpGet("GetAllCustomerLoans")]
         public List<Loan> GetAllCustomerLoans()
         {
