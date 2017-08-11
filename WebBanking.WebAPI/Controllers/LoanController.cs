@@ -37,9 +37,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
+        [HttpPost("Payment")]
+        public void Payment(LoanPaymentDetails loanPaymentDetails)
         {
+            loanServices.Payment(GetCustomerId(), loanPaymentDetails);
         }
 
         // PUT api/values/5

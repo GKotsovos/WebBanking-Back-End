@@ -44,5 +44,14 @@ namespace WebBanking.DAL
                 }
             }
         }
+
+        public void Update(Loan loan)
+        {
+            using (var bankContext = new BankingContext())
+            {
+                bankContext.Loan.Update(loan);
+                bankContext.SaveChanges();
+            }
+        }
     }
 }

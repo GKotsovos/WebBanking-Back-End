@@ -9,24 +9,70 @@ namespace WebBanking.Services
 {
     public class LoanServices
     {
-        LoanManager accountMamager;
+        LoanManager loanManager;
+        CardServices cardServices;
+        AccountServices accountServices;
+        TransactionHistoryService transactionHistoryService;
 
         public LoanServices()
         {
-            accountMamager = new LoanManager();
+            loanManager = new LoanManager();
+            cardServices = new CardServices();
+            accountServices = new AccountServices();
+            transactionHistoryService = new TransactionHistoryService();
         }
 
-        public Loan GetLoan(string accountId)
         public Loan GetLoan(string loanId)
         {
-            return accountMamager.GetLoanById(accountId);
             return loanManager.GetLoanById(loanId);
         }
 
         public List<Loan> GetAllCustomerLoans(string customerId)
         {
-            return accountMamager.GetAllCustomerLoans(customerId).ToList();
+            return loanManager.GetAllCustomerLoans(customerId).ToList();
         }
 
+        public void Payment(string customerId, LoanPaymentDetails loanPaymentDetails)
+        {
+            var debitAccount = accountServices.GetAccountByIban(loanPaymentDetails.DebitAccount);
+            var loan = loanManager.GetLoanById(loanPaymentDetails.LoanId);
+
+            if (debitAccount.AvailableBalance >= loanPaymentDetails.Amount)
+            {
+                if (loan.NextInstallmentAmount >= loanPaymentDetails.Amount)
+                {
+                    loan.NextInstallmentAmount -= loanPaymentDetails.Amount;
+                    loan.Debt -= loanPaymentDetails.Amount;
+                }
+                else if (loan.Debt >= loanPaymentDetails.Amount)
+                {
+                    decimal difference = loanPaymentDetails.Amount - loan.NextInstallmentAmount;
+
+                    loan.NextInstallmentAmount = 0;
+                    loan.Debt = -difference;
+                }
+                else
+                {
+                    return;
+                }
+
+                debitAccount.AvailableBalance -= loanPaymentDetails.Amount;
+                debitAccount.LedgerBalance -= loanPaymentDetails.Amount;
+                loanManager.Update(loan);
+                accountServices.UpdateAccount(debitAccount);
+
+                var transactionHistory = new TransactionHistory();
+                transactionHistory.Amount = loanPaymentDetails.Amount;
+                transactionHistory.Beneficiary = "Agile Bank";
+                transactionHistory.Currency = loanPaymentDetails.Currency;
+                transactionHistory.CustomerId = customerId;
+                transactionHistory.Date = loanPaymentDetails.Date;
+                transactionHistory.Details = "ΠΛΗΡΩΜΗ ΔΑΝΕΙΟΥ";
+                transactionHistory.LedgerBalance = debitAccount.LedgerBalance;
+                transactionHistory.ProductId = debitAccount.Iban;
+                transactionHistory.TransactionType = "debit";
+                transactionHistoryService.AddTransactionHistory(transactionHistory);
+            }
+        }
     }
 }
