@@ -105,5 +105,14 @@ namespace WebBanking.DAL
                     .ToList();
             }
         }
+
+        public void UpdatePrepaidCard(PrepaidCard prepaidCard)
+        {
+            using (var bankContext = new BankingContext())
+            {
+                bankContext.PrepaidCard.Update(prepaidCard);
+                bankContext.SaveChanges();
+            }
+        }
     }
 }
