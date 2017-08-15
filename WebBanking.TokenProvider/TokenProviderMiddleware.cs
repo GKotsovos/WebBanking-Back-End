@@ -45,9 +45,6 @@ namespace WebBanking.TokenProvider
 
         public Task Invoke(HttpContext context)
         {
-            var keys = context.Request.Headers.Keys;
-            var values = context.Request.Headers.Values;
-            var body = context.Request.Body;
             // If the request path doesn't match, skip
             if (!context.Request.Path.Equals(_options.Path, StringComparison.Ordinal))
             {

@@ -11,13 +11,15 @@ namespace WebBanking.Services
     {
         CardManager cardManager;
         AccountServices accountServices;
-        TransactionHistoryService transactionHistoryService;
+        LoanServices loanServices;
+        TransactionService transactionHistoryService;
 
-        public CardServices()
+        public CardServices(AccountServices accountServices, LoanServices loanServices, TransactionService transactionHistoryService)
         {
             cardManager = new CardManager();
-            accountServices = new AccountServices();
-            transactionHistoryService = new TransactionHistoryService();
+            this.accountServices = accountServices;
+            this.loanServices = loanServices;
+            this.transactionHistoryService = transactionHistoryService;
         }
 
         public DebitCardWithLinkedProducts GetDebitCardWithLinkedProducts(string cardId)
@@ -64,48 +66,182 @@ namespace WebBanking.Services
             return cardManager.GetCreditCardById(cardId);
         }
 
-        public void CreditCardPayment(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        public TransactionResult CreditCardPaymentUsingAccount(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
         {
+            TransactionResult transactionResult = new TransactionResult(false, "");
             var debitAccount = accountServices.GetAccountByIban(creditCardPaymentDetails.DebitAccount);
-            var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
-            decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
-
-            if (debitAccount.AvailableBalance >= totalDebitAmount)
+            if (debitAccount != null)
             {
-                if (creditCard.NextInstallmentAmount >= creditCardPaymentDetails.Amount)
+                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                if (creditCard != null)
+                {
+                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitAccount.AvailableBalance);
+                    if (!transactionResult.HasError)
+                    {
+                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        debitAccount.AvailableBalance -= totalDebitAmount;
+                        debitAccount.LedgerBalance -= totalDebitAmount;
+                        accountServices.UpdateAccount(debitAccount);
+                        cardManager.UpdateCreditCard(creditCard);
+                        AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitAccount.Iban, debitAccount.LedgerBalance);
+                    }
+                }
+                else
+                {
+                    transactionResult = new TransactionResult(true, "Η πιστωτική κάρτα δεν βρέθηκε");
+                }
+            }
+            else
+            {
+                transactionResult = new TransactionResult(true, "Ο λογαριασμός χρέωσης δεν βρέθηκε");
+            }
+
+            return transactionResult;
+        }
+
+        public TransactionResult CreditCardPaymentUsingLoan(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        {
+            TransactionResult transactionResult = new TransactionResult(false, "");
+            var debitLoan = loanServices.GetLoan(creditCardPaymentDetails.DebitAccount);
+            if (debitLoan != null)
+            {
+                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                if (creditCard != null)
+                {
+                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitLoan.AvailableBalance);
+                    if (!transactionResult.HasError)
+                    {
+                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        debitLoan.AvailableBalance -= totalDebitAmount;
+                        loanServices.Update(debitLoan);
+                        cardManager.UpdateCreditCard(creditCard);
+                        AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitLoan.Id, debitLoan.AvailableBalance);
+                    }
+                }
+                else
+                {
+                    transactionResult = new TransactionResult(true, "Η πιστωτική κάρτα δεν βρέθηκε");
+                }
+            }
+            else
+            {
+                transactionResult = new TransactionResult(true, "Το δάνειο χρέωσης δεν βρέθηκε");
+            }
+
+            return transactionResult;
+        }
+
+        public TransactionResult CreditCardPaymentUsingCreditCard(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        {
+            TransactionResult transactionResult = new TransactionResult(false, "");
+            var debitCreditCard = GetCreditCardById(creditCardPaymentDetails.DebitAccount);
+            if (debitCreditCard != null)
+            {
+                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                if (creditCard != null)
+                {
+                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitCreditCard.AvailableLimit);
+                    if (!transactionResult.HasError)
+                    {
+                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        debitCreditCard.AvailableLimit -= totalDebitAmount;
+                        cardManager.UpdateCreditCard(debitCreditCard);
+                        cardManager.UpdateCreditCard(creditCard);
+                        AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitCreditCard.Id, debitCreditCard.AvailableLimit);
+                    }
+                }
+                else
+                {
+                    transactionResult = new TransactionResult(true, "Η πιστωτική κάρτα δεν βρέθηκε");
+                }
+            }
+            else
+            {
+                transactionResult = new TransactionResult(true, "Η πιστωτική κάρτα χρέωσης δεν βρέθηκε");
+            }
+
+            return transactionResult;
+        }
+
+        public TransactionResult CreditCardPaymentUsingPrepaidCard(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        {
+            TransactionResult transactionResult = new TransactionResult(false, "");
+            var debitPrepaidCard = GetPrePaidCardById(creditCardPaymentDetails.DebitAccount);
+            if (debitPrepaidCard != null)
+            {
+                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                if (creditCard != null)
+                {
+                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitPrepaidCard.AvailableLimit);
+                    if (!transactionResult.HasError)
+                    {
+                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        debitPrepaidCard.AvailableLimit -= totalDebitAmount;
+                        debitPrepaidCard.LedgerBalance -= totalDebitAmount;
+                        cardManager.UpdatePrepaidCard(debitPrepaidCard);
+                        cardManager.UpdateCreditCard(creditCard);
+                        AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitPrepaidCard.Id, debitPrepaidCard.AvailableLimit);
+                    }
+                }
+                else
+                {
+                    transactionResult = new TransactionResult(true, "Η πιστωτική κάρτα δεν βρέθηκε");
+                }
+            }
+            else
+            {
+                transactionResult = new TransactionResult(true, "Η προπληρωμένη κάρτα χρέωσης δεν βρέθηκε");
+            }
+
+            return transactionResult;
+        }
+
+        private TransactionResult CreditCardPayment(CreditCard creditCard, CreditCardPaymentDetails creditCardPaymentDetails, decimal debitAccountAvailableBalance)
+        {
+            var transactionResult = new TransactionResult(false, "");
+
+            if (debitAccountAvailableBalance >= (creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses))
+            {
+                if ((creditCard.NextInstallmentAmount < creditCardPaymentDetails.Amount) && (creditCard.Debt < creditCardPaymentDetails.Amount))
+                {
+                    transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από το σύνολο οφειλών");
+                }
+                else if (creditCard.Debt < creditCardPaymentDetails.Amount)
+                {
+                    transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από την τρέχων οφειλή");
+                }
+                else if (creditCard.NextInstallmentAmount >= creditCardPaymentDetails.Amount)
                 {
                     creditCard.NextInstallmentAmount -= creditCardPaymentDetails.Amount;
                     creditCard.Debt -= creditCardPaymentDetails.Amount;
                 }
-                else if (creditCard.Debt >= creditCardPaymentDetails.Amount)
-                {
-                    decimal difference = creditCardPaymentDetails.Amount - creditCard.NextInstallmentAmount;
-
-                    creditCard.NextInstallmentAmount = 0;
-                    creditCard.Debt = -difference;
-                }
                 else
                 {
-                    return;
-                }
-
-                debitAccount.AvailableBalance -= totalDebitAmount;
-                debitAccount.LedgerBalance -= totalDebitAmount;
-                cardManager.UpdateCreditCard(creditCard);
-                accountServices.UpdateAccount(debitAccount);
-
-                var transactionHistory = new TransactionHistory();
-                transactionHistory.Amount = creditCardPaymentDetails.Amount;
-                transactionHistory.Beneficiary = "Agile Bank";
-                transactionHistory.Currency = creditCardPaymentDetails.Currency;
-                transactionHistory.CustomerId = customerId;
-                transactionHistory.Date = creditCardPaymentDetails.Date;
-                transactionHistory.Details = "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ";
-                transactionHistory.LedgerBalance = debitAccount.LedgerBalance;
-                transactionHistory.ProductId = debitAccount.Iban;
-                transactionHistory.TransactionType = "debit";
-                transactionHistoryService.AddTransactionHistory(transactionHistory);
+                    creditCard.NextInstallmentAmount = 0;
+                    creditCard.Debt -= creditCardPaymentDetails.Amount;
+                }                             
             }
+            else
+            {
+                transactionResult = new TransactionResult(true, "Το υπόλοιπο του λογαριασμού χρέωσης δεν είναι αρκετό");
+            }
+
+            return transactionResult;
+        }
+        
+        public void AddCreditCardPaymentTransactionHistory(string customerId, CreditCardPaymentDetails creditCardPaymentDetails, string debitAccountId, decimal newAvailableAmount)
+        {
+            var transaction = new Transaction();
+            transaction.Amount = creditCardPaymentDetails.Amount;
+            transaction.Beneficiary = "Agile Bank";
+            transaction.Currency = creditCardPaymentDetails.Currency;
+            transaction.CustomerId = customerId;
+            transaction.Date = creditCardPaymentDetails.Date;
+            transaction.Details = "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ";
+            transaction.LedgerBalance = newAvailableAmount;
+            transaction.ProductId = debitAccountId;
+            transaction.TransactionType = "debit";
+            transactionHistoryService.AddTransaction(transaction);
         }
 
         public List<CreditCard> GetAllCustomerCreditCards(string customerId)
