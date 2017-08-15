@@ -17,7 +17,7 @@ namespace WebBanking.Services
         public LoanServices()
         {
             loanManager = new LoanManager();
-            cardServices = new CardServices();
+            cardServices = new CardServices(new AccountServices(), this, new TransactionService());
             accountServices = new AccountServices();
             transactionHistoryService = new TransactionService();
         }
@@ -73,6 +73,11 @@ namespace WebBanking.Services
                 transactionHistory.TransactionType = "debit";
                 transactionHistoryService.AddTransaction(transactionHistory);
             }
+        }
+
+        public void Update(Loan loan)
+        {
+            loanManager.Update(loan);
         }
     }
 }
