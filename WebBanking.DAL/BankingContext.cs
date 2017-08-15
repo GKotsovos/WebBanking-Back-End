@@ -16,7 +16,7 @@ namespace WebBanking.DAL
         public virtual DbSet<Loan> Loan { get; set; }
         public virtual DbSet<OrganizationOrder> OrganizationOrder { get; set; }
         public virtual DbSet<PrepaidCard> PrepaidCard { get; set; }
-        public virtual DbSet<TransactionHistory> TransactionHistory { get; set; }
+        public virtual DbSet<Transaction> Transaction { get; set; }
         public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -195,6 +195,7 @@ namespace WebBanking.DAL
                     .HasColumnType("varchar(3)");
 
                 entity.Property(e => e.CustomTitle).HasMaxLength(300);
+
                 entity.Property(e => e.CustomerId)
                     .IsRequired()
                     .HasColumnType("varchar(11)");
@@ -270,7 +271,7 @@ namespace WebBanking.DAL
                 entity.Property(e => e.LedgerBalance).HasColumnType("decimal");
             });
 
-            modelBuilder.Entity<TransactionHistory>(entity =>
+            modelBuilder.Entity<Transaction>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 

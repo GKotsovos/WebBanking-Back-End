@@ -14,20 +14,20 @@ namespace WebBanking.WebAPI.Controllers
     [Route("api/[controller]")]
     public class TransactionHistoryController : Controller
     {
-        TransactionHistoryService transactionHistoryServices;
+        TransactionService transactionServices;
 
         public TransactionHistoryController()
         {
-            transactionHistoryServices = new TransactionHistoryService();
+            transactionServices = new TransactionService();
         }
         
         [HttpGet("GetProductTransactionHistory/{id}")]
-        public List<TransactionHistory> GetProductTransactionHistory(string id)
+        public List<Transaction> GetProductTransactionHistory(string id)
         {
             //Response.ContentType = "application/json";
             //Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
             //Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-            return transactionHistoryServices.GetProductTransactionHistory(id);
+            return transactionServices.GetProductTransaction(id);
         }
 
         // POST api/values

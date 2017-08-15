@@ -12,14 +12,14 @@ namespace WebBanking.Services
         LoanManager loanManager;
         CardServices cardServices;
         AccountServices accountServices;
-        TransactionHistoryService transactionHistoryService;
+        TransactionService transactionHistoryService;
 
         public LoanServices()
         {
             loanManager = new LoanManager();
             cardServices = new CardServices();
             accountServices = new AccountServices();
-            transactionHistoryService = new TransactionHistoryService();
+            transactionHistoryService = new TransactionService();
         }
 
         public Loan GetLoan(string loanId)
@@ -61,7 +61,7 @@ namespace WebBanking.Services
                 loanManager.Update(loan);
                 accountServices.UpdateAccount(debitAccount);
 
-                var transactionHistory = new TransactionHistory();
+                var transactionHistory = new Transaction();
                 transactionHistory.Amount = loanPaymentDetails.Amount;
                 transactionHistory.Beneficiary = "Agile Bank";
                 transactionHistory.Currency = loanPaymentDetails.Currency;
@@ -71,7 +71,7 @@ namespace WebBanking.Services
                 transactionHistory.LedgerBalance = debitAccount.LedgerBalance;
                 transactionHistory.ProductId = debitAccount.Iban;
                 transactionHistory.TransactionType = "debit";
-                transactionHistoryService.AddTransactionHistory(transactionHistory);
+                transactionHistoryService.AddTransaction(transactionHistory);
             }
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebBanking.Model
 {
-    public partial class TransactionHistory
+    public partial class Transaction
     {
         public string CustomerId { get; set; }
         public string ProductId { get; set; }

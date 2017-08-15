@@ -6,13 +6,13 @@ using WebBanking.Model;
 
 namespace WebBanking.DAL
 {
-    public class TransactionHistoryManager
+    public class TransactionManager
     {
-        public List<TransactionHistory> GetTransactionHistoryByProductId(string productId)
+        public List<Transaction> GetTransactionByProductId(string productId)
         {
             using (var bankContext = new BankingContext())
             {
-                var transactionHistory = bankContext.TransactionHistory
+                var transactionHistory = bankContext.Transaction
                     .Where(_transactionHistory => _transactionHistory.ProductId == productId);
 
                 if (transactionHistory != null)
@@ -26,11 +26,11 @@ namespace WebBanking.DAL
             }
         }
 
-        public List<TransactionHistory> GetAllCustomerTransactionHistory(string customerId)
+        public List<Transaction> GetAllCustomerTransaction(string customerId)
         {
             using (var bankContext = new BankingContext())
             {
-                var transactionHistorys = bankContext.TransactionHistory
+                var transactionHistorys = bankContext.Transaction
                     .Where(transactionHistory => transactionHistory.CustomerId == customerId)
                     .ToList();
 
@@ -45,11 +45,11 @@ namespace WebBanking.DAL
             }
         }
 
-        public void AddTransactionHistory(TransactionHistory transactionHistory)
+        public void AddTransaction(Transaction transactionHistory)
         {
             using (var bankContext = new BankingContext())
             {
-                bankContext.TransactionHistory.Add(transactionHistory);
+                bankContext.Transaction.Add(transactionHistory);
                 bankContext.SaveChanges();
             }
         }
