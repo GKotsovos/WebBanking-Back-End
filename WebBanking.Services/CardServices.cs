@@ -67,23 +67,25 @@ namespace WebBanking.Services
         }
 
         public TransactionResult CreditCardPaymentUsingAccount(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        public TransactionResult CreditCardPaymentUsingAccount(string customerId, CardTransaction cardTransaction)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
-            var debitAccount = accountServices.GetAccountByIban(creditCardPaymentDetails.DebitAccount);
+            var debitAccount = accountServices.GetAccountByIban(cardTransaction.DebitAccount);
             if (debitAccount != null)
             {
-                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                var creditCard = GetCreditCardById(cardTransaction.CardId);
                 if (creditCard != null)
                 {
-                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitAccount.AvailableBalance);
+                    transactionResult = CreditCardPayment(creditCard, cardTransaction, debitAccount.AvailableBalance);
                     if (!transactionResult.HasError)
                     {
-                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        decimal totalDebitAmount = cardTransaction.Amount + cardTransaction.Expenses;
                         debitAccount.AvailableBalance -= totalDebitAmount;
                         debitAccount.LedgerBalance -= totalDebitAmount;
                         accountServices.UpdateAccount(debitAccount);
                         cardManager.UpdateCreditCard(creditCard);
                         AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitAccount.Iban, debitAccount.LedgerBalance);
+                        AddCreditCardPaymentTransactionHistory(customerId, cardTransaction, debitAccount.Iban, debitAccount.LedgerBalance);
                     }
                 }
                 else
@@ -99,23 +101,24 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult CreditCardPaymentUsingLoan(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        public TransactionResult CreditCardPaymentUsingLoan(string customerId, CardTransaction cardTransaction)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
-            var debitLoan = loanServices.GetLoan(creditCardPaymentDetails.DebitAccount);
+            var debitLoan = loanServices.GetLoanById(cardTransaction.DebitAccount);
             if (debitLoan != null)
             {
-                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                var creditCard = GetCreditCardById(cardTransaction.CardId);
                 if (creditCard != null)
                 {
-                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitLoan.AvailableBalance);
+                    transactionResult = CreditCardPayment(creditCard, cardTransaction, debitLoan.AvailableBalance);
                     if (!transactionResult.HasError)
                     {
-                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        decimal totalDebitAmount = cardTransaction.Amount + cardTransaction.Expenses;
                         debitLoan.AvailableBalance -= totalDebitAmount;
                         loanServices.Update(debitLoan);
                         cardManager.UpdateCreditCard(creditCard);
                         AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitLoan.Id, debitLoan.AvailableBalance);
+                        AddCreditCardPaymentTransactionHistory(customerId, cardTransaction, debitLoan.Id, debitLoan.AvailableBalance);
                     }
                 }
                 else
@@ -131,23 +134,24 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult CreditCardPaymentUsingCreditCard(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        public TransactionResult CreditCardPaymentUsingCreditCard(string customerId, CardTransaction cardTransaction)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
-            var debitCreditCard = GetCreditCardById(creditCardPaymentDetails.DebitAccount);
+            var debitCreditCard = GetCreditCardById(cardTransaction.DebitAccount);
             if (debitCreditCard != null)
             {
-                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                var creditCard = GetCreditCardById(cardTransaction.CardId);
                 if (creditCard != null)
                 {
-                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitCreditCard.AvailableLimit);
+                    transactionResult = CreditCardPayment(creditCard, cardTransaction, debitCreditCard.AvailableLimit);
                     if (!transactionResult.HasError)
                     {
-                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        decimal totalDebitAmount = cardTransaction.Amount + cardTransaction.Expenses;
                         debitCreditCard.AvailableLimit -= totalDebitAmount;
                         cardManager.UpdateCreditCard(debitCreditCard);
                         cardManager.UpdateCreditCard(creditCard);
                         AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitCreditCard.Id, debitCreditCard.AvailableLimit);
+                        AddCreditCardPaymentTransactionHistory(customerId, cardTransaction, debitCreditCard.Id, debitCreditCard.AvailableLimit);
                     }
                 }
                 else
@@ -163,24 +167,25 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult CreditCardPaymentUsingPrepaidCard(string customerId, CreditCardPaymentDetails creditCardPaymentDetails)
+        public TransactionResult CreditCardPaymentUsingPrepaidCard(string customerId, CardTransaction cardTransaction)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
-            var debitPrepaidCard = GetPrePaidCardById(creditCardPaymentDetails.DebitAccount);
+            var debitPrepaidCard = GetPrePaidCardById(cardTransaction.DebitAccount);
             if (debitPrepaidCard != null)
             {
-                var creditCard = cardManager.GetCreditCardById(creditCardPaymentDetails.CardId);
+                var creditCard = GetCreditCardById(cardTransaction.CardId);
                 if (creditCard != null)
                 {
-                    transactionResult = CreditCardPayment(creditCard, creditCardPaymentDetails, debitPrepaidCard.AvailableLimit);
+                    transactionResult = CreditCardPayment(creditCard, cardTransaction, debitPrepaidCard.AvailableLimit);
                     if (!transactionResult.HasError)
                     {
-                        decimal totalDebitAmount = creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses;
+                        decimal totalDebitAmount = cardTransaction.Amount + cardTransaction.Expenses;
                         debitPrepaidCard.AvailableLimit -= totalDebitAmount;
                         debitPrepaidCard.LedgerBalance -= totalDebitAmount;
                         cardManager.UpdatePrepaidCard(debitPrepaidCard);
                         cardManager.UpdateCreditCard(creditCard);
                         AddCreditCardPaymentTransactionHistory(customerId, creditCardPaymentDetails, debitPrepaidCard.Id, debitPrepaidCard.AvailableLimit);
+                        AddCreditCardPaymentTransactionHistory(customerId, cardTransaction, debitPrepaidCard.Id, debitPrepaidCard.AvailableLimit);
                     }
                 }
                 else
@@ -196,29 +201,29 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        private TransactionResult CreditCardPayment(CreditCard creditCard, CreditCardPaymentDetails creditCardPaymentDetails, decimal debitAccountAvailableBalance)
+        private TransactionResult CreditCardPayment(CreditCard creditCard, CardTransaction cardTransaction, decimal debitAccountAvailableBalance)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            if (debitAccountAvailableBalance >= (creditCardPaymentDetails.Amount + creditCardPaymentDetails.Expenses))
+            if (debitAccountAvailableBalance >= (cardTransaction.Amount + cardTransaction.Expenses))
             {
-                if ((creditCard.NextInstallmentAmount < creditCardPaymentDetails.Amount) && (creditCard.Debt < creditCardPaymentDetails.Amount))
+                if ((creditCard.NextInstallmentAmount < cardTransaction.Amount) && (creditCard.Debt < cardTransaction.Amount))
                 {
                     transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από το σύνολο οφειλών");
                 }
-                else if (creditCard.Debt < creditCardPaymentDetails.Amount)
+                else if (creditCard.Debt < cardTransaction.Amount)
                 {
                     transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από την τρέχων οφειλή");
                 }
-                else if (creditCard.NextInstallmentAmount >= creditCardPaymentDetails.Amount)
+                else if (creditCard.NextInstallmentAmount >= cardTransaction.Amount)
                 {
-                    creditCard.NextInstallmentAmount -= creditCardPaymentDetails.Amount;
-                    creditCard.Debt -= creditCardPaymentDetails.Amount;
+                    creditCard.NextInstallmentAmount -= cardTransaction.Amount;
+                    creditCard.Debt -= cardTransaction.Amount;
                 }
                 else
                 {
                     creditCard.NextInstallmentAmount = 0;
-                    creditCard.Debt -= creditCardPaymentDetails.Amount;
+                    creditCard.Debt -= cardTransaction.Amount;
                 }                             
             }
             else
@@ -229,14 +234,14 @@ namespace WebBanking.Services
             return transactionResult;
         }
         
-        public void AddCreditCardPaymentTransactionHistory(string customerId, CreditCardPaymentDetails creditCardPaymentDetails, string debitAccountId, decimal newAvailableAmount)
+        public void AddCreditCardPaymentTransactionHistory(string customerId, CardTransaction cardTransaction, string debitAccountId, decimal newAvailableAmount)
         {
             var transaction = new Transaction();
-            transaction.Amount = creditCardPaymentDetails.Amount;
+            transaction.Amount = cardTransaction.Amount;
             transaction.Beneficiary = "Agile Bank";
-            transaction.Currency = creditCardPaymentDetails.Currency;
+            transaction.Currency = cardTransaction.Currency;
             transaction.CustomerId = customerId;
-            transaction.Date = creditCardPaymentDetails.Date;
+            transaction.Date = cardTransaction.Date;
             transaction.Details = "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ";
             transaction.LedgerBalance = newAvailableAmount;
             transaction.ProductId = debitAccountId;

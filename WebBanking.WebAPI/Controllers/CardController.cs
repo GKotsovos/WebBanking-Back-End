@@ -61,24 +61,24 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("CreditCardPayment")]
-        public void CreditCardPayment(CreditCardPaymentDetails creditCardPaymentDetails)
+        public void CreditCardPayment(CardTransaction cardTransaction)
         {
             TransactionResult transactionResult;
-            if (creditCardPaymentDetails.DebitAccountType == "isAccount")
+            if (cardTransaction.DebitAccountType == "isAccount")
             {
-                transactionResult = cardServices.CreditCardPaymentUsingAccount(GetCustomerId(), creditCardPaymentDetails);
+                transactionResult = cardServices.CreditCardPaymentUsingAccount(GetCustomerId(), cardTransaction);
             }
-            else if (creditCardPaymentDetails.DebitAccountType == "isLoan")
+            else if (cardTransaction.DebitAccountType == "isLoan")
             {
-                transactionResult = cardServices.CreditCardPaymentUsingLoan(GetCustomerId(), creditCardPaymentDetails);
+                transactionResult = cardServices.CreditCardPaymentUsingLoan(GetCustomerId(), cardTransaction);
             }
-            else if (creditCardPaymentDetails.DebitAccountType == "isCreditCard")
+            else if (cardTransaction.DebitAccountType == "isCreditCard")
             {
-                transactionResult = cardServices.CreditCardPaymentUsingCreditCard(GetCustomerId(), creditCardPaymentDetails);
+                transactionResult = cardServices.CreditCardPaymentUsingCreditCard(GetCustomerId(), cardTransaction);
             }
-            else if (creditCardPaymentDetails.DebitAccountType == "isPrepaidCard")
+            else if (cardTransaction.DebitAccountType == "isPrepaidCard")
             {
-                transactionResult = cardServices.CreditCardPaymentUsingPrepaidCard(GetCustomerId(), creditCardPaymentDetails);
+                transactionResult = cardServices.CreditCardPaymentUsingPrepaidCard(GetCustomerId(), cardTransaction);
             }
             else
             {

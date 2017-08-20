@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebBanking.Model
 {
-    public class CreditCardPaymentDetails
+    public class CardTransaction
     {
         public string CardId { get; set; }
         public string DebitAccount { get; set; }
