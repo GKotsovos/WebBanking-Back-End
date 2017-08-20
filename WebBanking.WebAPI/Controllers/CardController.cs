@@ -82,7 +82,7 @@ namespace WebBanking.WebAPI.Controllers
             }
             else
             {
-                transactionResult = new TransactionResult(true, "Τρόπος πληρωμής δεν βρέθηκε");
+                transactionResult = new TransactionResult(true, "Τρόπος πληρωμής δε βρέθηκε");
             }
 
             if (transactionResult.HasError)
@@ -90,7 +90,38 @@ namespace WebBanking.WebAPI.Controllers
                 ReturnErrorResponse(transactionResult.Message);
             }
         }
-           
+
+        [HttpPost("PrepaidCardLoad")]
+        public void PrepaidCardLoad(CardTransaction cardTransaction)
+        {
+            TransactionResult transactionResult;
+            if (cardTransaction.DebitAccountType == "isAccount")
+            {
+                transactionResult = cardServices.PrepaidCardLoadUsingAccount(GetCustomerId(), cardTransaction);
+            }
+            else if (cardTransaction.DebitAccountType == "isLoan")
+            {
+                transactionResult = cardServices.PrepaidCardLoadUsingLoan(GetCustomerId(), cardTransaction);
+            }
+            else if (cardTransaction.DebitAccountType == "isCreditCard")
+            {
+                transactionResult = cardServices.PrepaidCardLoadUsingCreditCard(GetCustomerId(), cardTransaction);
+            }
+            else if (cardTransaction.DebitAccountType == "isPrepaidCard")
+            {
+                transactionResult = cardServices.PrepaidCardLoadUsingPrepaidCard(GetCustomerId(), cardTransaction);
+            }
+            else
+            {
+                transactionResult = new TransactionResult(true, "Τρόπος πληρωμής δε βρέθηκε");
+            }
+
+            if (transactionResult.HasError)
+            {
+                ReturnErrorResponse(transactionResult.Message);
+            }
+        }
+
         private void ReturnErrorResponse(string errorMessage)
         {
             Response.ContentType = "application/json";
