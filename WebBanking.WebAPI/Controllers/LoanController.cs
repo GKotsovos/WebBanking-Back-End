@@ -7,6 +7,7 @@ using System.Security.Claims;
 using WebBanking.Model;
 using WebBanking.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Text;
 
 namespace WebBanking.WebAPI.Controllers
 {
@@ -24,7 +25,7 @@ namespace WebBanking.WebAPI.Controllers
         [HttpGet("GetLoanById/{id}")]
         public Loan GetLoanById(string id)
         {
-            return loanServices.GetLoan(id);
+            return loanServices.GetLoanById(id);
         }
 
         [HttpGet("GetAllCustomerLoans")]
@@ -36,11 +37,42 @@ namespace WebBanking.WebAPI.Controllers
             return loanServices.GetAllCustomerLoans(GetCustomerId());
         }
 
-        // POST api/values
-        [HttpPost("Payment")]
-        public void Payment(LoanPaymentDetails loanPaymentDetails)
+        [HttpPost("LoanPayment")]
+        public void LoanPayment(LoanTransaction loanTransaction)
         {
-            loanServices.Payment(GetCustomerId(), loanPaymentDetails);
+            TransactionResult transactionResult;
+            if (loanTransaction.DebitAccountType == "isAccount")
+            {
+                transactionResult = loanServices.LoanPaymentUsingAccount(GetCustomerId(), loanTransaction);
+            }
+            else if (loanTransaction.DebitAccountType == "isLoan")
+            {
+                transactionResult = loanServices.LoanPaymentUsingLoan(GetCustomerId(), loanTransaction);
+            }
+            else if (loanTransaction.DebitAccountType == "isCreditCard")
+            {
+                transactionResult = loanServices.LoanPaymentUsingCreditCard(GetCustomerId(), loanTransaction);
+            }
+            else if (loanTransaction.DebitAccountType == "isPrepaidCard")
+            {
+                transactionResult = loanServices.LoanPaymentUsingPrepaidCard(GetCustomerId(), loanTransaction);
+            }
+            else
+            {
+                transactionResult = new TransactionResult(true, "Τρόπος πληρωμής δε βρέθηκε");
+            }
+
+            if (transactionResult.HasError)
+            {
+                ReturnErrorResponse(transactionResult.Message);
+            }
+        }
+
+        private void ReturnErrorResponse(string errorMessage)
+        {
+            Response.ContentType = "application/json";
+            Response.StatusCode = 400;
+            Response.Body.WriteAsync(Encoding.UTF8.GetBytes(errorMessage), 0, Encoding.UTF8.GetBytes(errorMessage).Length);
         }
 
         // PUT api/values/5
