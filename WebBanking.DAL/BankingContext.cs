@@ -30,12 +30,7 @@ namespace WebBanking.DAL
         {
             modelBuilder.Entity<Account>(entity =>
             {
-                entity.HasKey(e => e.Iban)
-                    .HasName("PK_Accounts");
-
-                entity.Property(e => e.Iban)
-                    .HasColumnName("IBAN")
-                    .HasColumnType("varchar(27)");
+                entity.Property(e => e.Id).HasColumnType("varchar(27)");
 
                 entity.Property(e => e.AvailableBalance).HasColumnType("decimal");
 
@@ -113,7 +108,7 @@ namespace WebBanking.DAL
             {
                 entity.Property(e => e.Id).HasColumnType("varchar(16)");
 
-                entity.Property(e => e.AvailableLimit).HasColumnType("decimal");
+                entity.Property(e => e.AvailableBalance).HasColumnType("decimal");
 
                 entity.Property(e => e.Brand)
                     .IsRequired()
@@ -159,7 +154,7 @@ namespace WebBanking.DAL
             {
                 entity.Property(e => e.Id).HasColumnType("varchar(16)");
 
-                entity.Property(e => e.AvailableLimit).HasColumnType("decimal");
+                entity.Property(e => e.AvailableBalance).HasColumnType("decimal");
 
                 entity.Property(e => e.Brand)
                     .IsRequired()
@@ -221,6 +216,10 @@ namespace WebBanking.DAL
 
                 entity.Property(e => e.IssuedDate).HasColumnType("date");
 
+                entity.Property(e => e.LedgerBalance)
+                    .HasColumnType("decimal")
+                    .HasDefaultValueSql("0");
+
                 entity.Property(e => e.LoanedAmount).HasColumnType("decimal");
 
                 entity.Property(e => e.NextInstallmentAmount).HasColumnType("decimal");
@@ -267,7 +266,7 @@ namespace WebBanking.DAL
             {
                 entity.Property(e => e.Id).HasColumnType("varchar(16)");
 
-                entity.Property(e => e.AvailableLimit).HasColumnType("decimal");
+                entity.Property(e => e.AvailableBalance).HasColumnType("decimal");
 
                 entity.Property(e => e.Brand)
                     .IsRequired()
