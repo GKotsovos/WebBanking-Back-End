@@ -32,5 +32,35 @@ namespace WebBanking.Services
         {
             transactionManager.AddTransaction(transactionHistory);
         }
+
+        public void AddCreditCardPaymentTransaction(string customerId, CardTransaction cardTransaction, string debitAccountId, decimal newAvailableAmount)
+        {
+            var transaction = new Transaction();
+            transaction.Amount = cardTransaction.Amount;
+            transaction.Beneficiary = "Agile Bank";
+            transaction.Currency = cardTransaction.Currency;
+            transaction.CustomerId = customerId;
+            transaction.Date = cardTransaction.Date;
+            transaction.Details = "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ";
+            transaction.LedgerBalance = newAvailableAmount;
+            transaction.ProductId = debitAccountId;
+            transaction.TransactionType = "debit";
+            AddTransaction(transaction);
+        }
+
+        public void AddLoanPaymentTransactionHistory(string customerId, LoanTransaction loanTransaction, string debitAccountId, decimal newAvailableAmount)
+        {
+            var transaction = new Transaction();
+            transaction.Amount = loanTransaction.Amount;
+            transaction.Beneficiary = "Agile Bank";
+            transaction.Currency = loanTransaction.Currency;
+            transaction.CustomerId = customerId;
+            transaction.Date = loanTransaction.Date;
+            transaction.Details = "ΠΛΗΡΩΜΗ ΔΑΝΕΙΟΥ";
+            transaction.LedgerBalance = newAvailableAmount;
+            transaction.ProductId = debitAccountId;
+            transaction.TransactionType = "debit";
+            AddTransaction(transaction);
+        }
     }
 }

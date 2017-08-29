@@ -60,37 +60,6 @@ namespace WebBanking.WebAPI.Controllers
             return cardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
         }
 
-        [HttpPost("CreditCardPayment")]
-        public void CreditCardPayment(CardTransaction cardTransaction)
-        {
-            TransactionResult transactionResult;
-            if (cardTransaction.DebitAccountType == "isAccount")
-            {
-                transactionResult = cardServices.CreditCardPaymentUsingAccount(GetCustomerId(), cardTransaction);
-            }
-            else if (cardTransaction.DebitAccountType == "isLoan")
-            {
-                transactionResult = cardServices.CreditCardPaymentUsingLoan(GetCustomerId(), cardTransaction);
-            }
-            else if (cardTransaction.DebitAccountType == "isCreditCard")
-            {
-                transactionResult = cardServices.CreditCardPaymentUsingCreditCard(GetCustomerId(), cardTransaction);
-            }
-            else if (cardTransaction.DebitAccountType == "isPrepaidCard")
-            {
-                transactionResult = cardServices.CreditCardPaymentUsingPrepaidCard(GetCustomerId(), cardTransaction);
-            }
-            else
-            {
-                transactionResult = new TransactionResult(true, "Τρόπος πληρωμής δε βρέθηκε");
-            }
-
-            if (transactionResult.HasError)
-            {
-                ReturnErrorResponse(transactionResult.Message);
-            }
-        }
-
         [HttpPost("PrepaidCardLoad")]
         public void PrepaidCardLoad(CardTransaction cardTransaction)
         {

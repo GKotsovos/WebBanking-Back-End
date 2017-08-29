@@ -37,37 +37,6 @@ namespace WebBanking.WebAPI.Controllers
             return loanServices.GetAllCustomerLoans(GetCustomerId());
         }
 
-        [HttpPost("LoanPayment")]
-        public void LoanPayment(LoanTransaction loanTransaction)
-        {
-            TransactionResult transactionResult;
-            if (loanTransaction.DebitAccountType == "isAccount")
-            {
-                transactionResult = loanServices.LoanPaymentUsingAccount(GetCustomerId(), loanTransaction);
-            }
-            else if (loanTransaction.DebitAccountType == "isLoan")
-            {
-                transactionResult = loanServices.LoanPaymentUsingLoan(GetCustomerId(), loanTransaction);
-            }
-            else if (loanTransaction.DebitAccountType == "isCreditCard")
-            {
-                transactionResult = loanServices.LoanPaymentUsingCreditCard(GetCustomerId(), loanTransaction);
-            }
-            else if (loanTransaction.DebitAccountType == "isPrepaidCard")
-            {
-                transactionResult = loanServices.LoanPaymentUsingPrepaidCard(GetCustomerId(), loanTransaction);
-            }
-            else
-            {
-                transactionResult = new TransactionResult(true, "Τρόπος πληρωμής δε βρέθηκε");
-            }
-
-            if (transactionResult.HasError)
-            {
-                ReturnErrorResponse(transactionResult.Message);
-            }
-        }
-
         private void ReturnErrorResponse(string errorMessage)
         {
             Response.ContentType = "application/json";
