@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebBanking.Model;
 using WebBanking.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebBanking.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class BankController : Controller
     {

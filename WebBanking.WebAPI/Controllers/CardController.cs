@@ -16,7 +16,6 @@ namespace WebBanking.WebAPI.Controllers
     [Route("api/[controller]")]
     public class CardController : Controller
     {
-
         CardServices cardServices;
         AccountServices accountServices;
         LinkedCardServices linkedCardServices;
@@ -69,20 +68,6 @@ namespace WebBanking.WebAPI.Controllers
             Response.ContentType = "application/json";
             Response.StatusCode = 400;
             Response.Body.WriteAsync(Encoding.UTF8.GetBytes(errorMessage), 0, Encoding.UTF8.GetBytes(errorMessage).Length);
-        }
-
-        // POST api/values
-        // DELETE api/values/5
-        [HttpPost("DeleteLinkedProduct")]
-        public void DeleteLinkedProduct(string cardId, string productId)
-        {
-            cardServices.DeleteLinkedProduct(cardId, productId);
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
         }
 
         private string GetCustomerId()
