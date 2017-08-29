@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace WebBanking.Model
 {
-    public class Account
+    public partial class Account : IHasBalances
     {
-        public string Iban { get; set; }
+        public string Id { get; set; }
         public string CustomerId { get; set; }
         public string Currency { get; set; }
         public string Type { get; set; }

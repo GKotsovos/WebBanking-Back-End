@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebBanking.Model
 {
-    public class Loan
+    public partial class Loan : IHasBalances
     {
         public string Id { get; set; }
         public string CustomerId { get; set; }
@@ -18,5 +18,6 @@ namespace WebBanking.Model
         public decimal Debt { get; set; }
         public string CustomTitle { get; set; }
         public decimal RepaymentBalance { get; set; }
+        public decimal LedgerBalance { get; set; }
     }
 }

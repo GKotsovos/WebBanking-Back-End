@@ -8,12 +8,12 @@ namespace WebBanking.DAL
 {
     public class AccountManager
     {
-        public Account GetAccountById(string Iban)
+        public Account GetAccountById(string Id)
         {
             using (var bankContext = new BankingContext())
             {
                 var account = bankContext.Account
-                    .FirstOrDefault(_account => _account.Iban == Iban);
+                    .FirstOrDefault(_account => _account.Id == Id);
 
                 if (account != null)
                 {
@@ -45,11 +45,11 @@ namespace WebBanking.DAL
             }
         }
 
-        public void UpdateAccount(Account account)
+        public void UpdateAccount(IHasBalances account)
         {
             using (var bankContext = new BankingContext())
             {
-                bankContext.Account.Update(account);
+                bankContext.Account.Update(account as Account);
                 bankContext.SaveChanges();
             }
         }

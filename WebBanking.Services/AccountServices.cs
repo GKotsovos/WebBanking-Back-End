@@ -16,9 +16,9 @@ namespace WebBanking.Services
             accountMamager = new AccountManager();
         }
 
-        public Account GetAccountByIban(string Iban)
+        public Account GetAccountById(string Id)
         {
-            return accountMamager.GetAccountById(Iban);
+            return accountMamager.GetAccountById(Id);
         }
 
         public List<Account> GetAllCustomerAccounts(string customerId)
@@ -27,6 +27,7 @@ namespace WebBanking.Services
         }
 
         public void UpdateAccount(Account account)
+        public void UpdateAccount(IHasBalances account)
         {
             accountMamager.UpdateAccount(account);
         }
