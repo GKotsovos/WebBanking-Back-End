@@ -48,6 +48,21 @@ namespace WebBanking.Services
             AddTransaction(transaction);
         }
 
+        public void AddPrepaidCardLoadTransaction(string customerId, CardTransaction cardTransaction, string debitAccountId, decimal newAvailableAmount)
+        {
+            var transaction = new Transaction();
+            transaction.Amount = cardTransaction.Amount;
+            transaction.Beneficiary = "Agile Bank";
+            transaction.Currency = cardTransaction.Currency;
+            transaction.CustomerId = customerId;
+            transaction.Date = cardTransaction.Date;
+            transaction.Details = "ΦΟΡΤΙΣΗ ΠΡΟΠΛΗΡΩΜΕΝΗΣ";
+            transaction.LedgerBalance = newAvailableAmount;
+            transaction.ProductId = debitAccountId;
+            transaction.TransactionType = "debit";
+            AddTransaction(transaction);
+        }
+
         public void AddLoanPaymentTransactionHistory(string customerId, LoanTransaction loanTransaction, string debitAccountId, decimal newAvailableAmount)
         {
             var transaction = new Transaction();

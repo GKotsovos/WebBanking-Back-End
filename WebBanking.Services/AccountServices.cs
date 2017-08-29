@@ -26,7 +26,14 @@ namespace WebBanking.Services
             return accountMamager.GetAllCustomerAccounts(customerId).ToList();
         }
 
-        public void UpdateAccount(Account account)
+        public void DebitAccount(IHasBalances debitAccount, decimal Amount, decimal expenses)
+        {
+            decimal totalDebitAmount = Amount + expenses;
+            debitAccount.AvailableBalance -= totalDebitAmount;
+            debitAccount.LedgerBalance -= totalDebitAmount;
+            UpdateAccount(debitAccount);
+        }
+
         public void UpdateAccount(IHasBalances account)
         {
             accountMamager.UpdateAccount(account);
