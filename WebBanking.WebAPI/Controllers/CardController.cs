@@ -18,16 +18,20 @@ namespace WebBanking.WebAPI.Controllers
     {
 
         CardServices cardServices;
+        AccountServices accountServices;
+        LinkedCardServices linkedCardServices;
 
         public CardController()
         {
-            cardServices = new CardServices(new AccountServices(), new LoanServices(), new TransactionService());
+            cardServices = new CardServices();
+            accountServices = new AccountServices();
+            linkedCardServices = new LinkedCardServices(accountServices);
         }
 
         [HttpGet("GetDebitCardWithLinkedProductsById/{id}")]
         public DebitCardWithLinkedProducts GetDebitCardWithLinkedProductsById(string id)
         {
-            return cardServices.GetDebitCardWithLinkedProducts(id);
+            return linkedCardServices.GetDebitCardWithLinkedProducts(id);
         }
 
         [HttpGet("GetCreditCardById/{id}")]
@@ -48,7 +52,7 @@ namespace WebBanking.WebAPI.Controllers
             //Response.ContentType = "application/json";
             //Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
             //Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-            var debitCards = cardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
+            var debitCards = linkedCardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
             var creditCards = cardServices.GetAllCustomerCreditCards(GetCustomerId());
             var prepaidCards = cardServices.GetAllCustomerPrepaidCards(GetCustomerId());
             return new Cards(debitCards, creditCards, prepaidCards);
@@ -57,38 +61,7 @@ namespace WebBanking.WebAPI.Controllers
         [HttpGet("GetAllCustomerDebitCardsLinkedProducts")]
         public List<DebitCardWithLinkedProducts> GetAllCustomerDebitCardsLinkedProducts()
         {
-            return cardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
-        }
-
-        [HttpPost("PrepaidCardLoad")]
-        public void PrepaidCardLoad(CardTransaction cardTransaction)
-        {
-            TransactionResult transactionResult;
-            if (cardTransaction.DebitAccountType == "isAccount")
-            {
-                transactionResult = cardServices.PrepaidCardLoadUsingAccount(GetCustomerId(), cardTransaction);
-            }
-            else if (cardTransaction.DebitAccountType == "isLoan")
-            {
-                transactionResult = cardServices.PrepaidCardLoadUsingLoan(GetCustomerId(), cardTransaction);
-            }
-            else if (cardTransaction.DebitAccountType == "isCreditCard")
-            {
-                transactionResult = cardServices.PrepaidCardLoadUsingCreditCard(GetCustomerId(), cardTransaction);
-            }
-            else if (cardTransaction.DebitAccountType == "isPrepaidCard")
-            {
-                transactionResult = cardServices.PrepaidCardLoadUsingPrepaidCard(GetCustomerId(), cardTransaction);
-            }
-            else
-            {
-                transactionResult = new TransactionResult(true, "Τρόπος πληρωμής δε βρέθηκε");
-            }
-
-            if (transactionResult.HasError)
-            {
-                ReturnErrorResponse(transactionResult.Message);
-            }
+            return linkedCardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
         }
 
         private void ReturnErrorResponse(string errorMessage)

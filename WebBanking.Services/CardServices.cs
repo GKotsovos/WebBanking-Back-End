@@ -14,39 +14,6 @@ namespace WebBanking.Services
         public CardServices()
         {
             cardManager = new CardManager();
-
-        public DebitCardWithLinkedProducts GetDebitCardWithLinkedProducts(string cardId)
-        {
-            var debitCard = cardManager.GetDebitCardById(cardId);
-            var linkedProducts = cardManager
-                .GetDebitCardLinkedProducts(cardId)
-                .Select(linkedProduct => accountServices.GetAccountByIban(linkedProduct.ProductId))
-                .ToList();
-            return new DebitCardWithLinkedProducts(debitCard, linkedProducts);
-        }
-
-        public List<DebitCardWithLinkedProducts> GetAllCustomerDebitCardsLinkedProducts(string customerId)
-        {
-            var debitCards = cardManager.GetAllCustomerDebitCards(customerId);
-            var linkedProducts = cardManager.GetAllCustomerDebitCardsLinkedProducts(customerId);
-
-            var cardWithLinkedProducts = new List<DebitCardWithLinkedProducts>();
-
-            foreach (var debitCard in debitCards)
-            {
-                var linkedAccounts = new List<Account>();
-
-                foreach (var linkedProdct in linkedProducts)
-                {
-                    if (debitCard.Id == linkedProdct.CardId)
-                    {
-                        linkedAccounts.Add(accountServices.GetAccountByIban(linkedProdct.ProductId));
-                    }
-                }
-                cardWithLinkedProducts.Add(new DebitCardWithLinkedProducts(debitCard, linkedAccounts));
-            }
-
-            return cardWithLinkedProducts;
         }
 
         public void DeleteLinkedProduct(string cardId, string productId)
