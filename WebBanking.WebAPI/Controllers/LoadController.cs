@@ -20,7 +20,7 @@ namespace WebBanking.WebAPI.Controllers
         AccountServices accountServices;
         CardServices cardServices;
         LoanServices loanServices;
-        TransactionService transactionService;
+        TransactionServices transactionService;
         Helper helper;
 
         public LoadController()
@@ -29,7 +29,7 @@ namespace WebBanking.WebAPI.Controllers
             cardServices = new CardServices();
             loadServices = new LoadServices(accountServices, cardServices);
             loanServices = new LoanServices();
-            transactionService = new TransactionService();
+            transactionService = new TransactionServices();
             helper = new Helper(accountServices, cardServices, loanServices);
         }
 

@@ -14,11 +14,11 @@ namespace WebBanking.WebAPI.Controllers
     [Route("api/[controller]")]
     public class TransactionHistoryController : Controller
     {
-        TransactionService transactionServices;
+        TransactionServices transactionServices;
 
         public TransactionHistoryController()
         {
-            transactionServices = new TransactionService();
+            transactionServices = new TransactionServices();
         }
         
         [HttpGet("GetProductTransactionHistory/{id}")]
