@@ -45,7 +45,7 @@ namespace WebBanking.DAL
             }
         }
 
-        public void UpdateAccount(IHasBalances account)
+        public void UpdateAccount(Account account)
         {
             using (var bankContext = new BankingContext())
             {

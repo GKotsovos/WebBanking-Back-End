@@ -83,16 +83,12 @@ namespace WebBanking.DAL
                     .IsRequired()
                     .HasColumnType("varchar(2)");
 
-                entity.Property(e => e.ExecutionsLeft).HasColumnType("decimal");
-
                 entity.Property(e => e.NextExecutionDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<Bank>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("varchar(3)");
+                entity.Property(e => e.Id).HasColumnType("varchar(3)");
 
                 entity.Property(e => e.Bic)
                     .IsRequired()
@@ -293,9 +289,21 @@ namespace WebBanking.DAL
 
                 entity.Property(e => e.Amount).HasColumnType("decimal");
 
+                entity.Property(e => e.Bank)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasDefaultValueSql("''");
+
                 entity.Property(e => e.Beneficiary)
                     .IsRequired()
                     .HasMaxLength(100);
+
+                entity.Property(e => e.Comments).HasColumnType("text");
+
+                entity.Property(e => e.CreditProduct)
+                    .IsRequired()
+                    .HasColumnType("varchar(27)")
+                    .HasDefaultValueSql("1");
 
                 entity.Property(e => e.Currency)
                     .IsRequired()
@@ -307,15 +315,15 @@ namespace WebBanking.DAL
 
                 entity.Property(e => e.Date).HasColumnType("date");
 
-                entity.Property(e => e.Details)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.LedgerBalance).HasColumnType("decimal");
-
-                entity.Property(e => e.ProductId)
+                entity.Property(e => e.DebitProduct)
                     .IsRequired()
                     .HasColumnType("varchar(27)");
+
+                entity.Property(e => e.NewBalance).HasColumnType("decimal");
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.TransactionType)
                     .IsRequired()
