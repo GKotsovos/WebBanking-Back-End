@@ -33,8 +33,8 @@ namespace WebBanking.WebAPI.Controllers
             helper = new Helper(accountServices, cardServices, loanServices);
         }
 
-        [HttpPost("CreditCardPayment")]
-        public void CreditCardPayment(CardTransaction cardTransaction)
+        [HttpPost("PrepaidCardLoad")]
+        public void PrepaidCardLoad(CardTransaction cardTransaction)
         {
             TransactionResult transactionResult;
             IHasBalances debitAccount = helper.GetDebitAccount(cardTransaction.DebitAccountType, cardTransaction.DebitAccount);

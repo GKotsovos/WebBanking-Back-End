@@ -58,7 +58,7 @@ namespace WebBanking.Services
             transaction.CreditProduct = "AGILGRAA - AGILE BANK";
             transaction.Amount = cardTransaction.Amount;
             transaction.TransactionType = "debit";
-            transaction.Beneficiary = "AGILGRAA - AGILE BANK";
+            transaction.Beneficiary = "AGILE BANK";
             transaction.Bank = "AGILGRAA - AGILE BANK";
             transaction.Currency = cardTransaction.Currency;
             transaction.Title = "ΦΟΡΤΙΣΗ ΠΡΟΠΛΗΡΩΜΕΝΗΣ";
@@ -75,7 +75,7 @@ namespace WebBanking.Services
             transaction.CreditProduct = "AGILGRAA - AGILE BANK";
             transaction.Amount = loanTransaction.Amount;
             transaction.TransactionType = "debit";
-            transaction.Beneficiary = "AGILGRAA - AGILE BANK";
+            transaction.Beneficiary = "AGILE BANK";
             transaction.Bank = "AGILGRAA - AGILE BANK";
             transaction.Currency = loanTransaction.Currency;
             transaction.Title = "ΠΛΗΡΩΜΗ ΔΑΝΕΙΟΥ";

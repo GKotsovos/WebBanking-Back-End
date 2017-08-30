@@ -45,11 +45,11 @@ namespace WebBanking.DAL
             }
         }
 
-        public void AddTransaction(Transaction transactionHistory)
+        public void AddTransaction(Transaction transaction)
         {
             using (var bankContext = new BankingContext())
             {
-                bankContext.Transaction.Add(transactionHistory);
+                bankContext.Transaction.Add(transaction);
                 bankContext.SaveChanges();
             }
         }

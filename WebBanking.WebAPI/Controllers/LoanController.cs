@@ -31,9 +31,6 @@ namespace WebBanking.WebAPI.Controllers
         [HttpGet("GetAllCustomerLoans")]
         public List<Loan> GetAllCustomerLoans()
         {
-            //Response.ContentType = "application/json";
-            //Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
-            //Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             return loanServices.GetAllCustomerLoans(GetCustomerId());
         }
 

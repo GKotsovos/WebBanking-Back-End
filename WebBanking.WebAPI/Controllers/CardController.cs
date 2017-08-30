@@ -48,9 +48,6 @@ namespace WebBanking.WebAPI.Controllers
         [HttpGet("GetAllCustomerCards")]
         public Cards GetAllCustomerCards()
         {
-            //Response.ContentType = "application/json";
-            //Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
-            //Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             var debitCards = linkedCardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
             var creditCards = cardServices.GetAllCustomerCreditCards(GetCustomerId());
             var prepaidCards = cardServices.GetAllCustomerPrepaidCards(GetCustomerId());

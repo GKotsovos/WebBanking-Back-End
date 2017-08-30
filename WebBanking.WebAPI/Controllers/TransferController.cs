@@ -34,7 +34,7 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("Transfer")]
-        public void LoanPayment(TransferTransaction transferTransaction)
+        public void Transfer(TransferTransaction transferTransaction)
         {
             TransactionResult transactionResult;
             IHasBalances debitAccount = helper.GetDebitAccount(transferTransaction.DebitAccountType, transferTransaction.DebitAccount);
@@ -47,7 +47,6 @@ namespace WebBanking.WebAPI.Controllers
             else
             {
                 helper.UpdateDebitAccount(transferTransaction.DebitAccountType, debitAccount);
-                accountServices.UpdateAccount(creditAccount);
                 transactionService.AddTransferTransaction(GetCustomerId(), transferTransaction, debitAccount.LedgerBalance);
             }
         }
