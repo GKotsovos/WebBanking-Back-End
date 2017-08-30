@@ -38,14 +38,14 @@ namespace WebBanking.WebAPI.Controllers
         {
             TransactionResult transactionResult;
             IHasBalances debitAccount = helper.GetDebitAccount(cardTransaction.DebitAccountType, cardTransaction.DebitAccount);
-            transactionResult = paymentServices.CreditCardPayment(GetCustomerId(), cardTransaction, debitAccount);
+            transactionResult = paymentServices.CreditCardPayment(cardTransaction, debitAccount);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
             }
             else
             {
-                transactionService.AddCreditCardPaymentTransaction(GetCustomerId(), cardTransaction, debitAccount.Id, debitAccount.LedgerBalance);
+                transactionService.AddCreditCardPaymentTransaction(GetCustomerId(), cardTransaction, debitAccount.LedgerBalance);
             }
         }
 
@@ -54,14 +54,14 @@ namespace WebBanking.WebAPI.Controllers
         {
             TransactionResult transactionResult;
             IHasBalances debitAccount = helper.GetDebitAccount(loanTransaction.DebitAccountType, loanTransaction.DebitAccount);
-            transactionResult = paymentServices.LoanPayment(GetCustomerId(), loanTransaction, debitAccount);
+            transactionResult = paymentServices.LoanPayment(loanTransaction, debitAccount);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
             }
             else
             {
-                transactionService.AddLoanPaymentTransactionHistory(GetCustomerId(), loanTransaction, debitAccount.Id, debitAccount.LedgerBalance);
+                transactionService.AddLoanPaymentTransaction(GetCustomerId(), loanTransaction, debitAccount.LedgerBalance);
             }
         }
 

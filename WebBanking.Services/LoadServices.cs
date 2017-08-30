@@ -17,7 +17,7 @@ namespace WebBanking.Services
             this.cardServices = cardServices;
         }
 
-        public TransactionResult PrepaidCardLoad(string customerId, CardTransaction cardTransaction, IHasBalances debitAccount)
+        public TransactionResult PrepaidCardLoad(CardTransaction cardTransaction, IHasBalances debitAccount)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
             if (debitAccount != null)

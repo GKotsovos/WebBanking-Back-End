@@ -19,7 +19,7 @@ namespace WebBanking.Services
             this.loanServices = loanServices;
         }
 
-        public TransactionResult CreditCardPayment(string customerId, CardTransaction cardTransaction, IHasBalances debitAccount)
+        public TransactionResult CreditCardPayment(CardTransaction cardTransaction, IHasBalances debitAccount)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
             if (debitAccount != null)
@@ -80,7 +80,7 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult LoanPayment(string customerId, LoanTransaction loanTransaction, IHasBalances debitAccount)
+        public TransactionResult LoanPayment(LoanTransaction loanTransaction, IHasBalances debitAccount)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
             if (debitAccount != null)

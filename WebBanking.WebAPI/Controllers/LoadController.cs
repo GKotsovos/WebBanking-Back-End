@@ -38,14 +38,14 @@ namespace WebBanking.WebAPI.Controllers
         {
             TransactionResult transactionResult;
             IHasBalances debitAccount = helper.GetDebitAccount(cardTransaction.DebitAccountType, cardTransaction.DebitAccount);
-            transactionResult = loadServices.PrepaidCardLoad(GetCustomerId(), cardTransaction, debitAccount);
+            transactionResult = loadServices.PrepaidCardLoad(cardTransaction, debitAccount);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
             }
             else
             {
-                transactionService.AddPrepaidCardLoadTransaction(GetCustomerId(), cardTransaction, debitAccount.Id, debitAccount.LedgerBalance);
+                transactionService.AddPrepaidCardLoadTransaction(GetCustomerId(), cardTransaction, debitAccount.LedgerBalance);
             }
         }
 

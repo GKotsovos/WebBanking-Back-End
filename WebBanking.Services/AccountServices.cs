@@ -31,10 +31,10 @@ namespace WebBanking.Services
             decimal totalDebitAmount = Amount + expenses;
             debitAccount.AvailableBalance -= totalDebitAmount;
             debitAccount.LedgerBalance -= totalDebitAmount;
-            UpdateAccount(debitAccount);
+            UpdateAccount(debitAccount as Account);
         }
 
-        public void UpdateAccount(IHasBalances account)
+        public void UpdateAccount(Account account)
         {
             accountMamager.UpdateAccount(account);
         }
