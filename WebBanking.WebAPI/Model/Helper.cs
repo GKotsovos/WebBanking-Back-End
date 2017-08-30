@@ -43,5 +43,23 @@ namespace WebBanking.WebAPI.Model
             return debitAccount;
         }
 
+        public void UpdateDebitAccount(string debitAccountType, IHasBalances debitAccount)
+        {
+            switch (debitAccountType)
+            {
+                case "isAccount":
+                    accountServices.UpdateAccount(debitAccount as Account);
+                    break;
+                case "isCreditCard":
+                    cardServices.UpdateCreditCard(debitAccount as CreditCard);
+                    break;
+                case "isPrepaidCard":
+                    cardServices.UpdatePrepaidCard(debitAccount as PrepaidCard);
+                    break;
+                case "isLoan":
+                    loanServices.LoanUpdate(debitAccount as Loan);
+                    break;
+            }
+        }
     }
 }
