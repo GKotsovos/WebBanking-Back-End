@@ -29,7 +29,7 @@ namespace WebBanking.Services
                 {
                     if (debitAccount.AvailableBalance >= (cardTransaction.Amount + cardTransaction.Expenses))
                     {
-                        transactionResult = PayCreditCard(creditCard, cardTransaction.Amount);
+                        transactionResult = PayInstallment(creditCard, cardTransaction.Amount);
                         if (!transactionResult.HasError)
                         {
                             accountServices.DebitAccount(debitAccount, cardTransaction.Amount, cardTransaction.Expenses);
@@ -54,32 +54,6 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        private TransactionResult PayCreditCard(CreditCard creditCard, decimal paymentAmount)
-        {
-            var transactionResult = new TransactionResult(false, "");
-
-            if ((creditCard.NextInstallmentAmount < paymentAmount) && (creditCard.Debt < paymentAmount))
-            {
-                transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από το σύνολο οφειλών");
-            }
-            else if (creditCard.Debt < paymentAmount)
-            {
-                transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από την τρέχων οφειλή");
-            }
-            else if (creditCard.NextInstallmentAmount >= paymentAmount)
-            {
-                creditCard.NextInstallmentAmount -= paymentAmount;
-                creditCard.Debt -= paymentAmount;
-            }
-            else
-            {
-                creditCard.NextInstallmentAmount = 0;
-                creditCard.Debt -= paymentAmount;
-            }
-
-            return transactionResult;
-        }
-
         public TransactionResult LoanPayment(LoanTransaction loanTransaction, IHasBalances debitAccount)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
@@ -90,7 +64,7 @@ namespace WebBanking.Services
                 {
                     if (debitAccount.AvailableBalance >= loanTransaction.Amount)
                     {
-                        transactionResult = PayLoan(loan, loanTransaction.Amount);
+                        transactionResult = PayInstallment(loan, loanTransaction.Amount);
                         if (!transactionResult.HasError)
                         {
                             accountServices.DebitAccount(debitAccount, loanTransaction.Amount, 0);
@@ -115,29 +89,32 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        private TransactionResult PayLoan(Loan loan, decimal payentAmount)
+
+        private TransactionResult PayInstallment(IHasInstallment product, decimal paymentAmount)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            if ((loan.NextInstallmentAmount < payentAmount) && (loan.Debt < payentAmount))
+            if ((product.NextInstallmentAmount < paymentAmount) && (product.Debt < paymentAmount))
             {
                 transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από το σύνολο οφειλών");
             }
-            else if (loan.Debt < payentAmount)
+            else if (product.Debt < paymentAmount)
             {
                 transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από την τρέχων οφειλή");
             }
-            else if (loan.NextInstallmentAmount >= payentAmount)
+            else if (product.NextInstallmentAmount >= paymentAmount)
             {
-                loan.NextInstallmentAmount -= payentAmount;
-                loan.Debt -= payentAmount;
-                loan.RepaymentBalance -= payentAmount;
+                product.NextInstallmentAmount -= paymentAmount;
+                product.Debt -= paymentAmount;
             }
             else
             {
-                loan.NextInstallmentAmount = 0;
-                loan.Debt -= payentAmount;
-                loan.RepaymentBalance -= payentAmount;
+                product.NextInstallmentAmount = 0;
+                product.Debt -= paymentAmount;
+                if (product is Loan)
+                {
+                    (product as Loan).RepaymentBalance -= paymentAmount;
+                }
             }
 
             return transactionResult;

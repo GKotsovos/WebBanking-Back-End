@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebBanking.Model
 {
-    public partial class CreditCard : IHasBalances
+    public partial class CreditCard : IHasBalances, IHasInstallment
     {
         public string Id { get; set; }
         public string CustomerId { get; set; }
