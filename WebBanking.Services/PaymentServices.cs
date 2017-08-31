@@ -9,14 +9,21 @@ namespace WebBanking.Services
 {
     public class PaymentServices
     {
+        PaymentManager paymentManager;
         AccountServices accountServices;
         CardServices cardServices;
         LoanServices loanServices;
         public PaymentServices(AccountServices accountServices, CardServices cardServices, LoanServices loanServices)
         {
+            paymentManager = new PaymentManager();
             this.accountServices = accountServices;
             this.cardServices = cardServices;
             this.loanServices = loanServices;
+        }
+
+        public List<PaymentMethod> GetPaymentMethods()
+        {
+            return paymentManager.GetPaymentMethods();
         }
 
         public TransactionResult CreditCardPayment(CardTransaction cardTransaction, IHasBalances debitAccount)

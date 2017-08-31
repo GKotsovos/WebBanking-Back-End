@@ -16,6 +16,7 @@ namespace WebBanking.DAL
         public virtual DbSet<LinkedProducts> LinkedProducts { get; set; }
         public virtual DbSet<Loan> Loan { get; set; }
         public virtual DbSet<OrganizationOrder> OrganizationOrder { get; set; }
+        public virtual DbSet<PaymentMethod> PaymentMethod { get; set; }
         public virtual DbSet<PrepaidCard> PrepaidCard { get; set; }
         public virtual DbSet<Transaction> Transaction { get; set; }
         public virtual DbSet<User> User { get; set; }
@@ -23,7 +24,7 @@ namespace WebBanking.DAL
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-JQNLA1D\SQLEXPRESS;Database=Banking;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=D10180W7784\SQLEXPRESS;Database=Banking;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -256,6 +257,19 @@ namespace WebBanking.DAL
                 entity.Property(e => e.Organization)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<PaymentMethod>(entity =>
+            {
+                entity.Property(e => e.Category)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.SubCategory).HasMaxLength(50);
             });
 
             modelBuilder.Entity<PrepaidCard>(entity =>

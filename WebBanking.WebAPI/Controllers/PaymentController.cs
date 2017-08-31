@@ -33,6 +33,12 @@ namespace WebBanking.WebAPI.Controllers
             helper = new Helper(accountServices, cardServices, loanServices);
         }
 
+        [HttpGet("GetPaymentMethods")]
+        public List<PaymentMethod> GetPaymentMethods()
+        {
+            return paymentServices.GetPaymentMethods();
+        }
+
         [HttpPost("CreditCardPayment")]
         public void CreditCardPayment(CardTransaction cardTransaction)
         {
