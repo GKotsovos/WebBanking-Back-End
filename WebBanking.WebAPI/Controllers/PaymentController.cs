@@ -39,6 +39,55 @@ namespace WebBanking.WebAPI.Controllers
             return paymentServices.GetPaymentMethods();
         }
 
+
+        public void Transaction(TransferTransaction transaction)
+        {
+            TransactionResult transactionResult = new TransactionResult(false, "");
+
+            IHasBalances debitAccount = helper.GetDebitAccount(transaction.DebitAccount, out transactionResult);
+            transactionResult = CheckDebitBalance(debitAccount);
+            if (!transactionResult.HasError)
+            {
+                if (transaction.IsInternal)
+                {
+                    if (transaction.IsTransfer)
+                    {
+                        Account creditAccount = helper.GetDebitAccount(transaction.DebitAccount, out transactionResult);
+                        transactionResult = transferServices.Transfer(debitAccount, creditAccount, transaction.Amount, transaction.Expenses);
+                        //DebitAccount(debitAccount);
+                        //CreditAccount(creditAccount);
+                        //transactionResult = accountServices.UpdateAccount(creditAccount);
+                    }
+                    else
+                    {
+                        IHasInstallment productForPayment = helper.GetProductForPayment(transaction.CreditAccount, out transactionResult);
+                        transactionResult = paymentServices.Pay(debitAccount, productForPayment, transaction.Amount, transaction.Expenses);
+                        //transactionResult = CheckDebt(productForPayment);
+                        //debitAccount(debitAccount);
+                        //PayDebt(productForPayment);
+                        //transactionResult = helper.UpdateProduct(productForPayment);
+                    }
+                }
+                else
+                {
+                    DebitAccount(debitAccount);
+                }
+                transactionResult = Update(debitAccount);
+            }
+            
+            if (transactionResult.HasError)
+            {
+                transactionService.LogTransaction(GetCustomerId(), transaction, debitAccount.AvailableBalance);
+            }
+            else
+            {
+                ReturnErrorResponse(transactionResult.Message);
+            }         
+
+        }
+
+
+
         [HttpPost("CreditCardPayment")]
         public void CreditCardPayment(CardTransaction cardTransaction)
         {
