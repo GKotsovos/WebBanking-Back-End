@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using WebBanking.Model;
 using WebBanking.Services;
 using Microsoft.AspNetCore.Authorization;
-using WebBanking.WebAPI.Model;
 using System.Security.Claims;
 using System.Text;
 
@@ -16,39 +15,22 @@ namespace WebBanking.WebAPI.Controllers
     [Route("api/[controller]")]
     public class TransferController : Controller
     {
-        AccountServices accountServices;
-        CardServices cardServices;
-        LoanServices loanServices;
         TransferServices transferServices;
-        TransactionServices transactionService;
-        Helper helper;
 
         public TransferController()
         {
-            accountServices = new AccountServices();
-            cardServices = new CardServices();
-            loanServices = new LoanServices();
-            transferServices = new TransferServices();
-            transactionService = new TransactionServices();
-            helper = new Helper(accountServices, cardServices, loanServices);
+            transferServices = new TransferServices(new AccountServices(), new CardServices(), new LoanServices());
         }
 
         [HttpPost("Transfer")]
-        public void Transfer(TransferTransaction transferTransaction)
+        public void Transfer(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            IHasBalances debitAccount = helper.GetDebitAccount(transferTransaction.DebitAccountType, transferTransaction.DebitAccount);
-            Account creditAccount = accountServices.GetAccountById(transferTransaction.CreditAccount);
-            transactionResult = transferServices.Transfer(debitAccount, creditAccount, transferTransaction.Amount, transferTransaction.Expenses);
+            transactionResult = transferServices.Transfer(transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
-            }
-            else
-            {
-                helper.UpdateDebitAccount(transferTransaction.DebitAccountType, debitAccount);
-                transactionService.AddTransferTransaction(GetCustomerId(), transferTransaction, debitAccount.LedgerBalance);
-            }
+            }            
         }
 
         private string GetCustomerId()

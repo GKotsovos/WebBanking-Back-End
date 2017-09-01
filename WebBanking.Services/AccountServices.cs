@@ -16,9 +16,16 @@ namespace WebBanking.Services
             accountMamager = new AccountManager();
         }
 
-        public Account GetAccountById(string Id)
+        public Account GetAccountById(string Id, out TransactionResult transactionResult)
         {
-            return accountMamager.GetAccountById(Id);
+            transactionResult = new TransactionResult(false, "");
+            var account = accountMamager.GetAccountById(Id);
+            if (account == null)
+            {
+                transactionResult.HasError = true;
+                transactionResult.Message = "Ο λογαριασμός δε βρέθηκε";
+            }
+            return account;
         }
 
         public List<Account> GetAllCustomerAccounts(string customerId)
@@ -26,17 +33,19 @@ namespace WebBanking.Services
             return accountMamager.GetAllCustomerAccounts(customerId).ToList();
         }
 
-        public void DebitAccount(IHasBalances debitAccount, decimal Amount, decimal expenses)
+        public TransactionResult UpdateAccount(Account account)
         {
-            decimal totalDebitAmount = Amount + expenses;
-            debitAccount.AvailableBalance -= totalDebitAmount;
-            debitAccount.LedgerBalance -= totalDebitAmount;
-            UpdateAccount(debitAccount as Account);
-        }
-
-        public void UpdateAccount(Account account)
-        {
-            accountMamager.UpdateAccount(account);
+            var transactionResult = new TransactionResult(false, "");
+            try
+            {
+                accountMamager.UpdateAccount(account);
+            }
+            catch (Exception)
+            {
+                transactionResult.HasError = true;
+                transactionResult.Message = "Λάθος κατά την ενημέρωση του λογαριασμού";
+            }
+            return transactionResult;
         }
     }
 }

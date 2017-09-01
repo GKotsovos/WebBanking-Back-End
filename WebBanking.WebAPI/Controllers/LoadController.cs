@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using WebBanking.Model;
 using WebBanking.Services;
 using Microsoft.AspNetCore.Authorization;
-using WebBanking.WebAPI.Model;
 using System.Security.Claims;
 using System.Text;
 
@@ -17,35 +16,23 @@ namespace WebBanking.WebAPI.Controllers
     public class LoadController : Controller
     {
         LoadServices loadServices;
-        AccountServices accountServices;
-        CardServices cardServices;
-        LoanServices loanServices;
-        TransactionServices transactionService;
-        Helper helper;
 
         public LoadController()
         {
-            accountServices = new AccountServices();
-            cardServices = new CardServices();
-            loadServices = new LoadServices(accountServices, cardServices);
-            loanServices = new LoanServices();
-            transactionService = new TransactionServices();
-            helper = new Helper(accountServices, cardServices, loanServices);
+            var accountServices = new AccountServices();
+            var cardServices = new CardServices();
+            var loanServices = new LoanServices();
+            loadServices = new LoadServices(new TransferServices(accountServices, cardServices, loanServices), accountServices, cardServices, loanServices);
         }
 
         [HttpPost("PrepaidCardLoad")]
-        public void PrepaidCardLoad(CardTransaction cardTransaction)
+        public void PrepaidCardLoad(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            IHasBalances debitAccount = helper.GetDebitAccount(cardTransaction.DebitAccountType, cardTransaction.DebitAccount);
-            transactionResult = loadServices.PrepaidCardLoad(cardTransaction, debitAccount);
+            transactionResult = loadServices.PrepaidCardLoad(transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
-            }
-            else
-            {
-                transactionService.AddPrepaidCardLoadTransaction(GetCustomerId(), cardTransaction, debitAccount.LedgerBalance);
             }
         }
 

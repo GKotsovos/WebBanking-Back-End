@@ -4,45 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebBanking.Model;
 using WebBanking.DAL;
+using WebBanking.Services.HelperMethods;
 
 namespace WebBanking.Services
 {
     public class LoadServices
     {
+        TransferServices transferServices;
         AccountServices accountServices;
         CardServices cardServices;
-        public LoadServices(AccountServices accountServices, CardServices cardServices)
+        Helper helper;
+        public LoadServices(TransferServices transferServices, AccountServices accountServices, CardServices cardServices, LoanServices loanServices)
         {
+            this.transferServices = transferServices;
             this.accountServices = accountServices;
             this.cardServices = cardServices;
+            this.helper = new Helper(accountServices, cardServices, loanServices);
         }
 
-        public TransactionResult PrepaidCardLoad(CardTransaction cardTransaction, IHasBalances debitAccount)
+        public TransactionResult PrepaidCardLoad(TransactionDTO transaction)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
-            if (debitAccount != null)
+            IHasBalances DebitProduct = helper.GetProduct(transaction.DebitProductIdType, transaction.DebitProductId, out transactionResult);
+            if (!transactionResult.HasError)
             {
-                var prepaidCard = cardServices.GetPrePaidCardById(cardTransaction.CardId);
-                if (prepaidCard != null)
+                var prepaidCard = cardServices.GetPrePaidCardById(transaction.CreditProductId, out transactionResult);
+                if (!transactionResult.HasError)
                 {
-                    if (debitAccount.AvailableBalance >= (cardTransaction.Amount + cardTransaction.Expenses))
+                    if (DebitProduct.AvailableBalance >= (transaction.Amount + transaction.Expenses))
                     {
-                        LoadPrepaidCard(prepaidCard, cardTransaction.Amount);
-                        accountServices.DebitAccount(debitAccount, cardTransaction.Amount, cardTransaction.Expenses);
+                        LoadPrepaidCard(prepaidCard, transaction.Amount);
+                        transferServices.DebitProductId(DebitProduct, transaction.Amount, transaction.Expenses);
                     }
                     else
                     {
                         transactionResult = new TransactionResult(true, "Το υπόλοιπο του λογαριασμού χρέωσης δεν είναι αρκετό");
                     }
                 }
-                else
-                {
-                    transactionResult = new TransactionResult(true, "Η προπληρωμένη κάρτα δε βρέθηκε");
-                }
-            }
-            else
-            {
-                transactionResult = new TransactionResult(true, "Ο λογαριασμός χρέωσης δε βρέθηκε");
             }
 
             return transactionResult;

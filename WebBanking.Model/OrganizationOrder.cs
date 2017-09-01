@@ -7,7 +7,7 @@ namespace WebBanking.Model
     {
         public string Id { get; set; }
         public string CustomerId { get; set; }
-        public string CreditAccount { get; set; }
+        public string CreditProduct { get; set; }
         public string Organization { get; set; }
         public long OrderCode { get; set; }
         public DateTime ExpirationDate { get; set; }

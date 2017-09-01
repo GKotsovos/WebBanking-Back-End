@@ -12,11 +12,11 @@ namespace WebBanking.WebAPI.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
-    public class TransactionHistoryController : Controller
+    public class TransactionController : Controller
     {
         TransactionServices transactionServices;
 
-        public TransactionHistoryController()
+        public TransactionController()
         {
             transactionServices = new TransactionServices();
         }

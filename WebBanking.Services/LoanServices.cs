@@ -16,9 +16,16 @@ namespace WebBanking.Services
             loanManager = new LoanManager();
         }
 
-        public Loan GetLoanById(string loanId)
+        public Loan GetLoanById(string loanId, out TransactionResult transactionResult)
         {
-            return loanManager.GetLoanById(loanId);
+            transactionResult = new TransactionResult(false, "");
+            var loan =  loanManager.GetLoanById(loanId);
+            if (loan == null)
+            {
+                transactionResult.HasError = true;
+                transactionResult.Message = "Το δάνειο δε βρέθηκε";
+            }
+            return loan;
         }
 
         public List<Loan> GetAllCustomerLoans(string customerId)

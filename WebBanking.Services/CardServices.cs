@@ -21,9 +21,16 @@ namespace WebBanking.Services
             cardManager.DeleteLinkedProduct(cardId, productId);
         }
 
-        public CreditCard GetCreditCardById(string cardId)
+        public CreditCard GetCreditCardById(string cardId, out TransactionResult transactionResult)
         {
-            return cardManager.GetCreditCardById(cardId);
+            transactionResult = new TransactionResult(false, "");
+            var creditCard =  cardManager.GetCreditCardById(cardId);
+            if (creditCard == null)
+            {
+                transactionResult.HasError = true;
+                transactionResult.Message = "Η πιστωτική κάρτα δε βρέθηκε";
+            }
+            return creditCard;
         }
 
         public void UpdateCreditCard(CreditCard creditCard)
@@ -36,9 +43,16 @@ namespace WebBanking.Services
             return cardManager.GetAllCustomerCreditCards(customerId);
         }
 
-        public PrepaidCard GetPrePaidCardById(string cardId)
+        public PrepaidCard GetPrePaidCardById(string cardId, out TransactionResult transactionResult)
         {
-            return cardManager.GetPrepaidCardById(cardId);
+            transactionResult = new TransactionResult(false, "");
+            var prepaidCard =  cardManager.GetPrepaidCardById(cardId);
+            if (prepaidCard == null)
+            {
+                transactionResult.HasError = true;
+                transactionResult.Message = "Η προπληρωμένη κάρτα δε βρέθηκε";
+            }
+            return prepaidCard;
         }
 
         public List<PrepaidCard> GetAllCustomerPrepaidCards(string customerId)

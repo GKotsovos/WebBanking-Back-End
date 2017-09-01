@@ -64,7 +64,7 @@ namespace WebBanking.DAL
 
                 entity.Property(e => e.Comments).HasColumnType("text");
 
-                entity.Property(e => e.CreditAccount)
+                entity.Property(e => e.CreditProductId)
                     .IsRequired()
                     .HasColumnType("varchar(15)");
 
@@ -76,7 +76,7 @@ namespace WebBanking.DAL
                     .IsRequired()
                     .HasColumnType("varchar(10)");
 
-                entity.Property(e => e.DebitAccount)
+                entity.Property(e => e.DebitProductId)
                     .IsRequired()
                     .HasColumnType("varchar(15)");
 
@@ -238,7 +238,7 @@ namespace WebBanking.DAL
             {
                 entity.Property(e => e.Id).HasColumnType("varchar(15)");
 
-                entity.Property(e => e.CreditAccount)
+                entity.Property(e => e.CreditProductId)
                     .IsRequired()
                     .HasColumnType("varchar(15)");
 
@@ -314,7 +314,7 @@ namespace WebBanking.DAL
 
                 entity.Property(e => e.Comments).HasColumnType("text");
 
-                entity.Property(e => e.CreditProduct)
+                entity.Property(e => e.CreditProductId)
                     .IsRequired()
                     .HasColumnType("varchar(27)")
                     .HasDefaultValueSql("1");
@@ -329,7 +329,7 @@ namespace WebBanking.DAL
 
                 entity.Property(e => e.Date).HasColumnType("date");
 
-                entity.Property(e => e.DebitProduct)
+                entity.Property(e => e.DebitProductId)
                     .IsRequired()
                     .HasColumnType("varchar(27)");
 

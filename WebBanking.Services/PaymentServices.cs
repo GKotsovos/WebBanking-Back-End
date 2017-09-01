@@ -4,21 +4,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebBanking.Model;
 using WebBanking.DAL;
+using WebBanking.Services.HelperMethods;
 
 namespace WebBanking.Services
 {
     public class PaymentServices
     {
         PaymentManager paymentManager;
-        AccountServices accountServices;
-        CardServices cardServices;
-        LoanServices loanServices;
-        public PaymentServices(AccountServices accountServices, CardServices cardServices, LoanServices loanServices)
+        TransferServices transferServices;
+        Helper helper;
+
+        public PaymentServices(TransferServices transferServices, AccountServices accountServices, CardServices cardServices, LoanServices loanServices)
         {
             paymentManager = new PaymentManager();
-            this.accountServices = accountServices;
-            this.cardServices = cardServices;
-            this.loanServices = loanServices;
+            this.transferServices = transferServices;
+            helper = new Helper(accountServices, cardServices, loanServices);
         }
 
         public List<PaymentMethod> GetPaymentMethods()
@@ -26,105 +26,82 @@ namespace WebBanking.Services
             return paymentManager.GetPaymentMethods();
         }
 
-        public TransactionResult CreditCardPayment(CardTransaction cardTransaction, IHasBalances debitAccount)
-        {
-            TransactionResult transactionResult = new TransactionResult(false, "");
-            if (debitAccount != null)
-            {
-                var creditCard = cardServices.GetCreditCardById(cardTransaction.CardId);
-                if (creditCard != null)
-                {
-                    if (debitAccount.AvailableBalance >= (cardTransaction.Amount + cardTransaction.Expenses))
-                    {
-                        transactionResult = PayInstallment(creditCard, cardTransaction.Amount);
-                        if (!transactionResult.HasError)
-                        {
-                            accountServices.DebitAccount(debitAccount, cardTransaction.Amount, cardTransaction.Expenses);
-                            cardServices.UpdateCreditCard(creditCard);
-                        }
-                    }
-                    else
-                    {
-                        transactionResult = new TransactionResult(true, "Το υπόλοιπο του λογαριασμού χρέωσης δεν είναι αρκετό");
-                    }
-                }
-                else
-                {
-                    transactionResult = new TransactionResult(true, "Η πιστωτική κάρτα δε βρέθηκε");
-                }
-            }
-            else
-            {
-                transactionResult = new TransactionResult(true, "Ο λογαριασμός χρέωσης δε βρέθηκε");
-            }
-
-            return transactionResult;
-        }
-
-        public TransactionResult LoanPayment(LoanTransaction loanTransaction, IHasBalances debitAccount)
-        {
-            TransactionResult transactionResult = new TransactionResult(false, "");
-            if (debitAccount != null)
-            {
-                var loan = loanServices.GetLoanById(loanTransaction.LoanId);
-                if (loan != null)
-                {
-                    if (debitAccount.AvailableBalance >= loanTransaction.Amount)
-                    {
-                        transactionResult = PayInstallment(loan, loanTransaction.Amount);
-                        if (!transactionResult.HasError)
-                        {
-                            accountServices.DebitAccount(debitAccount, loanTransaction.Amount, 0);
-                            loanServices.LoanUpdate(loan);
-                        }
-                    }
-                    else
-                    {
-                        transactionResult = new TransactionResult(true, "Το υπόλοιπο του λογαριασμού χρέωσης δεν είναι αρκετό");
-                    }
-                }
-                else
-                {
-                    transactionResult = new TransactionResult(true, "Το δάνειο δε βρέθηκε");
-                }
-            }
-            else
-            {
-                transactionResult = new TransactionResult(true, "Ο λογαριασμός χρέωσης δε βρέθηκε");
-            }
-
-            return transactionResult;
-        }
-
-
-        private TransactionResult PayInstallment(IHasInstallment product, decimal paymentAmount)
+        public TransactionResult CheckDebt(IHasInstallment productForPayment, decimal paymentAmount)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            if ((product.NextInstallmentAmount < paymentAmount) && (product.Debt < paymentAmount))
+            if ((productForPayment.NextInstallmentAmount < paymentAmount) && (productForPayment.Debt < paymentAmount))
             {
                 transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από το σύνολο οφειλών");
             }
-            else if (product.Debt < paymentAmount)
+            else if (productForPayment.NextInstallmentAmount < paymentAmount)
             {
                 transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από την τρέχων οφειλή");
             }
-            else if (product.NextInstallmentAmount >= paymentAmount)
+
+            return transactionResult;
+        }
+
+        public TransactionResult AgilePayment(TransactionDTO transaction)
+        {
+            var transactionResult = new TransactionResult(false, "");
+
+            IHasBalances DebitProduct = helper.GetProduct(transaction.DebitProductIdType, transaction.DebitProductId, out transactionResult);
+            transactionResult = transferServices.CheckDebitBalance(DebitProduct, transaction.Amount);
+            IHasInstallment productForPayment = (IHasInstallment)helper.GetProduct(transaction.CreditProductIdType, transaction.CreditProductId, out transactionResult);
+            if (!transactionResult.HasError)
             {
-                product.NextInstallmentAmount -= paymentAmount;
-                product.Debt -= paymentAmount;
-            }
-            else
-            {
-                product.NextInstallmentAmount = 0;
-                product.Debt -= paymentAmount;
-                if (product is Loan)
+                transactionResult = CheckDebt(productForPayment, transaction.Amount);
+                if (!transactionResult.HasError)
                 {
-                    (product as Loan).RepaymentBalance -= paymentAmount;
+                    Payment(DebitProduct, productForPayment, transaction.Amount, transaction.Expenses);
+                    transactionResult = helper.UpdateProduct(transaction.CreditProductIdType, (IHasBalances)productForPayment);
+                    if (!transactionResult.HasError)
+                    {
+                        transactionResult = helper.UpdateProduct(transaction.DebitProductIdType, DebitProduct);
+                    }
                 }
             }
 
             return transactionResult;
+        }
+
+        public TransactionResult ThirdPartyPayment(TransactionDTO transaction)
+        {
+            var transactionResult = new TransactionResult(false, "");
+
+            IHasBalances DebitProduct = helper.GetProduct(transaction.DebitProductIdType, transaction.DebitProductId, out transactionResult);
+            transactionResult = transferServices.CheckDebitBalance(DebitProduct, transaction.Amount);
+            if (!transactionResult.HasError)
+            {
+                transactionResult = helper.UpdateProduct(transaction.DebitProductIdType, DebitProduct);
+            }
+
+            return transactionResult;
+        }
+
+        public void Payment(IHasBalances DebitProduct, IHasInstallment productForPayment, decimal paymentAmount, decimal expenses)
+        {
+            transferServices.DebitProductId(DebitProduct, paymentAmount, expenses);
+            PayDebt(productForPayment, paymentAmount);
+        }
+
+        private void PayDebt(IHasInstallment productForPayment, decimal paymentAmount)
+        {
+            if (productForPayment.NextInstallmentAmount >= paymentAmount)
+            {
+                productForPayment.NextInstallmentAmount -= paymentAmount;
+                productForPayment.Debt -= paymentAmount;
+            }
+            else
+            {
+                productForPayment.NextInstallmentAmount = 0;
+                productForPayment.Debt -= paymentAmount;
+                if (productForPayment is Loan)
+                {
+                    (productForPayment as Loan).RepaymentBalance -= paymentAmount;
+                }
+            }
         }
     }
 }

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using WebBanking.Model;
 using WebBanking.Services;
 using Microsoft.AspNetCore.Authorization;
-using WebBanking.WebAPI.Model;
 using System.Security.Claims;
 using System.Text;
 
@@ -16,21 +15,14 @@ namespace WebBanking.WebAPI.Controllers
     [Route("api/[controller]")]
     public class PaymentController : Controller
     {
-        AccountServices accountServices;
-        CardServices cardServices;
-        LoanServices loanServices;
         PaymentServices paymentServices;
-        TransactionServices transactionService;
-        Helper helper;
 
         public PaymentController()
         {
-            accountServices = new AccountServices();
-            cardServices = new CardServices();
-            loanServices = new LoanServices();
-            paymentServices = new PaymentServices(accountServices, cardServices, loanServices);
-            transactionService = new TransactionServices();
-            helper = new Helper(accountServices, cardServices, loanServices);
+            var accountServices = new AccountServices();
+            var cardServices = new CardServices();
+            var loanServices = new LoanServices();
+            paymentServices = new PaymentServices(new TransferServices(accountServices, cardServices, loanServices), accountServices, cardServices, loanServices);
         }
 
         [HttpGet("GetPaymentMethods")]
@@ -40,83 +32,36 @@ namespace WebBanking.WebAPI.Controllers
         }
 
 
-        public void Transaction(TransferTransaction transaction)
-        {
-            TransactionResult transactionResult = new TransactionResult(false, "");
-
-            IHasBalances debitAccount = helper.GetDebitAccount(transaction.DebitAccount, out transactionResult);
-            transactionResult = CheckDebitBalance(debitAccount);
-            if (!transactionResult.HasError)
-            {
-                if (transaction.IsInternal)
-                {
-                    if (transaction.IsTransfer)
-                    {
-                        Account creditAccount = helper.GetDebitAccount(transaction.DebitAccount, out transactionResult);
-                        transactionResult = transferServices.Transfer(debitAccount, creditAccount, transaction.Amount, transaction.Expenses);
-                        //DebitAccount(debitAccount);
-                        //CreditAccount(creditAccount);
-                        //transactionResult = accountServices.UpdateAccount(creditAccount);
-                    }
-                    else
-                    {
-                        IHasInstallment productForPayment = helper.GetProductForPayment(transaction.CreditAccount, out transactionResult);
-                        transactionResult = paymentServices.Pay(debitAccount, productForPayment, transaction.Amount, transaction.Expenses);
-                        //transactionResult = CheckDebt(productForPayment);
-                        //debitAccount(debitAccount);
-                        //PayDebt(productForPayment);
-                        //transactionResult = helper.UpdateProduct(productForPayment);
-                    }
-                }
-                else
-                {
-                    DebitAccount(debitAccount);
-                }
-                transactionResult = Update(debitAccount);
-            }
-            
-            if (transactionResult.HasError)
-            {
-                transactionService.LogTransaction(GetCustomerId(), transaction, debitAccount.AvailableBalance);
-            }
-            else
-            {
-                ReturnErrorResponse(transactionResult.Message);
-            }         
-
-        }
-
-
-
         [HttpPost("CreditCardPayment")]
-        public void CreditCardPayment(CardTransaction cardTransaction)
+        public void CreditCardPayment(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            IHasBalances debitAccount = helper.GetDebitAccount(cardTransaction.DebitAccountType, cardTransaction.DebitAccount);
-            transactionResult = paymentServices.CreditCardPayment(cardTransaction, debitAccount);
+            transactionResult = paymentServices.AgilePayment(transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
-            }
-            else
-            {
-                transactionService.AddCreditCardPaymentTransaction(GetCustomerId(), cardTransaction, debitAccount.LedgerBalance);
             }
         }
 
         [HttpPost("LoanPayment")]
-        public void LoanPayment(LoanTransaction loanTransaction)
+        public void LoanPayment(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            IHasBalances debitAccount = helper.GetDebitAccount(loanTransaction.DebitAccountType, loanTransaction.DebitAccount);
-            transactionResult = paymentServices.LoanPayment(loanTransaction, debitAccount);
+            transactionResult = paymentServices.AgilePayment(transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
             }
-            else
+        }
+
+        [HttpPost("ThirdPartyPayment")]
+        public void ThridPartyPayment(TransactionDTO transaction)
+        {
+            TransactionResult transactionResult;
+            transactionResult = paymentServices.ThirdPartyPayment(transaction);
+            if (transactionResult.HasError)
             {
-                transactionService.AddLoanPaymentTransaction(GetCustomerId(), loanTransaction, debitAccount.LedgerBalance);
+                ReturnErrorResponse(transactionResult.Message);
             }
         }
 

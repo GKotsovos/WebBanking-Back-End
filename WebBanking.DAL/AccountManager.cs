@@ -49,8 +49,15 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                bankContext.Account.Update(account as Account);
-                bankContext.SaveChanges();
+                try
+                {
+                    bankContext.Account.Update(account as Account);
+                    bankContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
             }
         }
     }

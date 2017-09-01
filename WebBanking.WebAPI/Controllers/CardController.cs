@@ -36,13 +36,25 @@ namespace WebBanking.WebAPI.Controllers
         [HttpGet("GetCreditCardById/{id}")]
         public CreditCard GetCreditCardById(string id)
         {
-            return cardServices.GetCreditCardById(id);
+            var transactionResult = new TransactionResult(false, "");
+            var creditCard =  cardServices.GetCreditCardById(id, out transactionResult);
+            if (transactionResult.HasError)
+            {
+                ReturnErrorResponse(transactionResult.Message);
+            }
+            return creditCard;
         }
 
         [HttpGet("GetPrepaidCardById/{id}")]
         public PrepaidCard GetPrepaidCardById(string id)
         {
-            return cardServices.GetPrePaidCardById(id);
+            var transactionResult = new TransactionResult(false, "");
+            var prepaidCard =  cardServices.GetPrePaidCardById(id, out transactionResult);
+            if (transactionResult.HasError)
+            {
+                ReturnErrorResponse(transactionResult.Message);
+            }
+            return prepaidCard;
         }
 
         [HttpGet("GetAllCustomerCards")]

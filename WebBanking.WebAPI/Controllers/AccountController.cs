@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using WebBanking.Model;
 using WebBanking.Services;
 using System.Security.Claims;
+using System.Text;
 
 namespace WebBanking.WebAPI.Controllers
 {
@@ -24,13 +25,26 @@ namespace WebBanking.WebAPI.Controllers
         [HttpGet("GetAccountById/{id}")]
         public Account GetAccountById(string id)
         {
-            return accountServices.GetAccountById(id);
+            var transactionResult = new TransactionResult(false, "");
+            var account = accountServices.GetAccountById(id, out transactionResult);
+            if (transactionResult.HasError)
+            {
+                ReturnErrorResponse(transactionResult.Message);
+            }
+            return account;
         }
 
         [HttpGet("GetAllCustomerAccounts")]
         public List<Account> GetAllCustomerAccounts()
         {
             return accountServices.GetAllCustomerAccounts(GetCustomerId());
+        }
+
+        private void ReturnErrorResponse(string errorMessage)
+        {
+            Response.ContentType = "application/json";
+            Response.StatusCode = 400;
+            Response.Body.WriteAsync(Encoding.UTF8.GetBytes(errorMessage), 0, Encoding.UTF8.GetBytes(errorMessage).Length);
         }
 
         private string GetCustomerId()

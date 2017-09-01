@@ -12,7 +12,7 @@ namespace WebBanking.DAL
         {
             using (var bankingContext = new BankingContext())
             {
-                return bankingContext.Payment
+                return bankingContext.PaymentMethod
                     .Select(paymentMethod => paymentMethod)
                     .ToList();
             }

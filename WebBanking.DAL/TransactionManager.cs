@@ -13,7 +13,7 @@ namespace WebBanking.DAL
             using (var bankContext = new BankingContext())
             {
                 var transactionHistory = bankContext.Transaction
-                    .Where(_transaction => _transaction.DebitProduct == productId);
+                    .Where(_transaction => _transaction.DebitProductId == productId);
 
                 if (transactionHistory != null)
                 {
