@@ -19,6 +19,7 @@ namespace WebBanking.Services
         public List<Transaction> GetProductTransaction(string productId)
         {
             var transactionHistory = transactionManager.GetTransactionByProductId(productId);
+            transactionHistory.Sort((x,y) => x.Date.CompareTo(y.Date));
             transactionHistory.Reverse();
             return transactionHistory;
         }
@@ -39,15 +40,10 @@ namespace WebBanking.Services
             transaction.Beneficiary = transactionDTO.Beneficiary;
             transaction.Bank = transactionDTO.Bank;
             transaction.Currency = transactionDTO.Currency;
-            transaction.Title = "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ";
+            transaction.Title = title;
             transaction.NewBalance = newAvailableAmount;
             transaction.Date = transactionDTO.Date;
-            PersistTransaction(transaction);
-        }
-
-        public void PersistTransaction(Transaction transactionHistory)
-        {
-            transactionManager.AddTransaction(transactionHistory);
+            transactionManager.AddTransaction(transaction);
         }
     }
 }
