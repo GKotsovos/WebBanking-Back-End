@@ -22,14 +22,16 @@ namespace WebBanking.WebAPI.Controllers
             var accountServices = new AccountServices();
             var cardServices = new CardServices();
             var loanServices = new LoanServices();
-            loadServices = new LoadServices(new TransferServices(accountServices, cardServices, loanServices), accountServices, cardServices, loanServices);
+            var transactionServices = new TransactionServices();
+            var transferServices = new TransferServices(accountServices, cardServices, loanServices, transactionServices);
+            loadServices = new LoadServices(transferServices, accountServices, cardServices, loanServices, transactionServices);
         }
 
         [HttpPost("PrepaidCardLoad")]
         public void PrepaidCardLoad(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            transactionResult = loadServices.PrepaidCardLoad(transaction);
+            transactionResult = loadServices.PrepaidCardLoad(GetCustomerId(), transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

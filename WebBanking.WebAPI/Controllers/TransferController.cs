@@ -19,14 +19,14 @@ namespace WebBanking.WebAPI.Controllers
 
         public TransferController()
         {
-            transferServices = new TransferServices(new AccountServices(), new CardServices(), new LoanServices());
+            transferServices = new TransferServices(new AccountServices(), new CardServices(), new LoanServices(), new TransactionServices());
         }
 
         [HttpPost("Transfer")]
         public void Transfer(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            transactionResult = transferServices.Transfer(transaction);
+            transactionResult = transferServices.Transfer(GetCustomerId(), transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

@@ -12,12 +12,14 @@ namespace WebBanking.Services
     {
         PaymentManager paymentManager;
         TransferServices transferServices;
+        TransactionServices transactionServices;
         Helper helper;
 
-        public PaymentServices(TransferServices transferServices, AccountServices accountServices, CardServices cardServices, LoanServices loanServices)
+        public PaymentServices(TransferServices transferServices, AccountServices accountServices, CardServices cardServices, LoanServices loanServices, TransactionServices transactionServices)
         {
             paymentManager = new PaymentManager();
             this.transferServices = transferServices;
+            this.transactionServices = transactionServices;
             helper = new Helper(accountServices, cardServices, loanServices);
         }
 
@@ -42,23 +44,27 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult AgilePayment(TransactionDTO transaction)
+        public TransactionResult AgilePayment(string customerId, string title, TransactionDTO transaction)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            IHasBalances DebitProduct = helper.GetProduct(transaction.DebitProductIdType, transaction.DebitProductId, out transactionResult);
-            transactionResult = transferServices.CheckDebitBalance(DebitProduct, transaction.Amount);
-            IHasInstallment productForPayment = (IHasInstallment)helper.GetProduct(transaction.CreditProductIdType, transaction.CreditProductId, out transactionResult);
+            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult);
+            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount);
+            IHasInstallment productForPayment = (IHasInstallment)helper.GetProduct(transaction.CreditProductType, transaction.CreditProductId, out transactionResult);
             if (!transactionResult.HasError)
             {
                 transactionResult = CheckDebt(productForPayment, transaction.Amount);
                 if (!transactionResult.HasError)
                 {
-                    Payment(DebitProduct, productForPayment, transaction.Amount, transaction.Expenses);
-                    transactionResult = helper.UpdateProduct(transaction.CreditProductIdType, (IHasBalances)productForPayment);
+                    Payment(debitProduct, productForPayment, transaction.Amount, transaction.Expenses);
+                    transactionResult = helper.UpdateProduct(transaction.CreditProductType, (IHasBalances)productForPayment);
                     if (!transactionResult.HasError)
                     {
-                        transactionResult = helper.UpdateProduct(transaction.DebitProductIdType, DebitProduct);
+                        transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
+                        if (!transactionResult.HasError)
+                        {
+                            transactionServices.LogTransaction(customerId, title, debitProduct.AvailableBalance, transaction);
+                        }
                     }
                 }
             }
@@ -66,23 +72,27 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult ThirdPartyPayment(TransactionDTO transaction)
+        public TransactionResult ThirdPartyPayment(string customerId, TransactionDTO transaction)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            IHasBalances DebitProduct = helper.GetProduct(transaction.DebitProductIdType, transaction.DebitProductId, out transactionResult);
-            transactionResult = transferServices.CheckDebitBalance(DebitProduct, transaction.Amount);
+            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult);
+            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount);
             if (!transactionResult.HasError)
             {
-                transactionResult = helper.UpdateProduct(transaction.DebitProductIdType, DebitProduct);
+                transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
+                if (!transactionResult.HasError)
+                {
+                    transactionServices.LogTransaction(customerId, "", debitProduct.AvailableBalance, transaction);
+                }
             }
 
             return transactionResult;
         }
 
-        public void Payment(IHasBalances DebitProduct, IHasInstallment productForPayment, decimal paymentAmount, decimal expenses)
+        public void Payment(IHasBalances debitProduct, IHasInstallment productForPayment, decimal paymentAmount, decimal expenses)
         {
-            transferServices.DebitProductId(DebitProduct, paymentAmount, expenses);
+            transferServices.DebitProduct(debitProduct, paymentAmount, expenses);
             PayDebt(productForPayment, paymentAmount);
         }
 

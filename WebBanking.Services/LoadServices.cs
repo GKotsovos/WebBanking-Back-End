@@ -13,32 +13,37 @@ namespace WebBanking.Services
         TransferServices transferServices;
         AccountServices accountServices;
         CardServices cardServices;
+        TransactionServices transactionServices;
         Helper helper;
-        public LoadServices(TransferServices transferServices, AccountServices accountServices, CardServices cardServices, LoanServices loanServices)
+        public LoadServices(TransferServices transferServices, AccountServices accountServices, CardServices cardServices, LoanServices loanServices, TransactionServices transactionServices)
         {
             this.transferServices = transferServices;
             this.accountServices = accountServices;
             this.cardServices = cardServices;
-            this.helper = new Helper(accountServices, cardServices, loanServices);
+            this.transactionServices = transactionServices;
+            helper = new Helper(accountServices, cardServices, loanServices);
         }
 
-        public TransactionResult PrepaidCardLoad(TransactionDTO transaction)
+        public TransactionResult PrepaidCardLoad(string customerId, TransactionDTO transaction)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
-            IHasBalances DebitProduct = helper.GetProduct(transaction.DebitProductIdType, transaction.DebitProductId, out transactionResult);
+            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult);
+            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount);
             if (!transactionResult.HasError)
             {
                 var prepaidCard = cardServices.GetPrePaidCardById(transaction.CreditProductId, out transactionResult);
                 if (!transactionResult.HasError)
                 {
-                    if (DebitProduct.AvailableBalance >= (transaction.Amount + transaction.Expenses))
+                    transferServices.DebitProduct(debitProduct, transaction.Amount, transaction.Expenses);
+                    LoadPrepaidCard(prepaidCard, transaction.Amount);
+                    transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
+                    if (!transactionResult.HasError)
                     {
-                        LoadPrepaidCard(prepaidCard, transaction.Amount);
-                        transferServices.DebitProductId(DebitProduct, transaction.Amount, transaction.Expenses);
-                    }
-                    else
-                    {
-                        transactionResult = new TransactionResult(true, "Το υπόλοιπο του λογαριασμού χρέωσης δεν είναι αρκετό");
+                        transactionResult = cardServices.UpdatePrepaidCard(prepaidCard);
+                        if (!transactionResult.HasError)
+                        {
+                            transactionServices.LogTransaction(customerId, "ΦΟΡΤΙΣΗ ΠΡΟΠΛΗΡΩΜΕΝΗΣ", debitProduct.AvailableBalance, transaction);
+                        }
                     }
                 }
             }

@@ -22,7 +22,9 @@ namespace WebBanking.WebAPI.Controllers
             var accountServices = new AccountServices();
             var cardServices = new CardServices();
             var loanServices = new LoanServices();
-            paymentServices = new PaymentServices(new TransferServices(accountServices, cardServices, loanServices), accountServices, cardServices, loanServices);
+            var transactionServices = new TransactionServices();
+            var transferServices = new TransferServices(accountServices, cardServices, loanServices, transactionServices);
+            paymentServices = new PaymentServices(transferServices, accountServices, cardServices, loanServices, transactionServices);
         }
 
         [HttpGet("GetPaymentMethods")]
@@ -36,7 +38,7 @@ namespace WebBanking.WebAPI.Controllers
         public void CreditCardPayment(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            transactionResult = paymentServices.AgilePayment(transaction);
+            transactionResult = paymentServices.AgilePayment(GetCustomerId(), "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ", transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -47,7 +49,7 @@ namespace WebBanking.WebAPI.Controllers
         public void LoanPayment(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            transactionResult = paymentServices.AgilePayment(transaction);
+            transactionResult = paymentServices.AgilePayment(GetCustomerId(), "ΠΛΗΡΩΜΗ ΔΑΝΕΙΟΥ", transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -58,7 +60,7 @@ namespace WebBanking.WebAPI.Controllers
         public void ThridPartyPayment(TransactionDTO transaction)
         {
             TransactionResult transactionResult;
-            transactionResult = paymentServices.ThirdPartyPayment(transaction);
+            transactionResult = paymentServices.ThirdPartyPayment(GetCustomerId(), transaction);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
