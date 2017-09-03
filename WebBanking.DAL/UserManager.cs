@@ -12,6 +12,7 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
+                string customerId = "";
                 var user =  bankContext.User
                     .FirstOrDefault(usr => usr.Id == userId);
 
@@ -19,11 +20,11 @@ namespace WebBanking.DAL
                 {
                     if (BCrypt.Net.BCrypt.Verify(password, user.Password))
                     {
-                        return user.CustomerId;
+                        customerId =  user.CustomerId;
                     }
                 }
 
-                return null;
+                return customerId;
             }
         }
     }

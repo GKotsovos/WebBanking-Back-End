@@ -21,8 +21,16 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                return bankContext.LinkedProducts
-                    .Where(linkedProduct => linkedProduct.CardId == cardId).ToList();
+                var debitCardsWithLinkedProducts = bankContext.LinkedProducts
+                    .Where(linkedProduct => linkedProduct.CardId == cardId);
+                if (debitCardsWithLinkedProducts != null)
+                {
+                    return debitCardsWithLinkedProducts.ToList();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -30,9 +38,16 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                return bankContext.DebitCard
-                    .Where(card => card.CustomerId == customerId)
-                    .ToList();
+                var debitCards =  bankContext.DebitCard
+                    .Where(card => card.CustomerId == customerId);
+                if (debitCards != null)
+                {
+                    return debitCards.ToList();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
         
@@ -41,9 +56,16 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                return bankContext.LinkedProducts
-                    .Where(linkedProduct => linkedProduct.CustomerId == customerId)
-                    .ToList();
+                var debitCardsWithLinkedProducts = bankContext.LinkedProducts
+                    .Where(linkedProduct => linkedProduct.CustomerId == customerId);
+                if (debitCardsWithLinkedProducts != null)
+                {
+                    return debitCardsWithLinkedProducts.ToList();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -53,9 +75,11 @@ namespace WebBanking.DAL
             {
                 var linkedProduct = bankContext.LinkedProducts
                     .First(product => product.CardId == cardId && product.ProductId == productId);
-
-                bankContext.Remove(linkedProduct);
-                bankContext.SaveChanges();
+                if (linkedProduct != null)
+                {
+                    bankContext.Remove(linkedProduct);
+                    bankContext.SaveChanges();
+                }
             }
         }
 
@@ -72,9 +96,16 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                return bankContext.CreditCard
-                    .Where(card => card.CustomerId == customerId)
-                    .ToList();
+                var creditCards =  bankContext.CreditCard
+                    .Where(card => card.CustomerId == customerId);
+                if (creditCards != null)
+                {
+                    return creditCards.ToList();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -100,9 +131,16 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                return bankContext.PrepaidCard
-                    .Where(card => card.CustomerId == customerId)
-                    .ToList();
+                var prepaidCards =  bankContext.PrepaidCard
+                    .Where(card => card.CustomerId == customerId);
+                if (prepaidCards != null)
+                {
+                    return prepaidCards.ToList();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

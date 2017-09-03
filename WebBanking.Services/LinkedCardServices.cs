@@ -19,10 +19,12 @@ namespace WebBanking.Services
 
         public DebitCardWithLinkedProducts GetDebitCardWithLinkedProducts(string cardId)
         {
+
             var debitCard = cardManager.GetDebitCardById(cardId);
+            var transactionResult = new TransactionResult(false, "");
             var linkedProducts = cardManager
                 .GetDebitCardLinkedProducts(cardId)
-                .Select(linkedProduct => accountServices.GetAccountById(linkedProduct.ProductId))
+                .Select(linkedProduct => accountServices.GetAccountById(linkedProduct.ProductId, out transactionResult))
                 .ToList();
             return new DebitCardWithLinkedProducts(debitCard, linkedProducts);
         }
@@ -42,7 +44,8 @@ namespace WebBanking.Services
                 {
                     if (debitCard.Id == linkedProdct.CardId)
                     {
-                        linkedAccounts.Add(accountServices.GetAccountById(linkedProdct.ProductId));
+                        var transactionResult = new TransactionResult(false, "");
+                        linkedAccounts.Add(accountServices.GetAccountById(linkedProdct.ProductId, out transactionResult));
                     }
                 }
                 cardWithLinkedProducts.Add(new DebitCardWithLinkedProducts(debitCard, linkedAccounts));

@@ -60,9 +60,19 @@ namespace WebBanking.Services
             return cardManager.GetAllCustomerPrepaidCards(customerId);
         }
 
-        public void UpdatePrepaidCard(PrepaidCard prepaidCard)
+        public TransactionResult UpdatePrepaidCard(PrepaidCard prepaidCard)
         {
-            cardManager.UpdatePrepaidCard(prepaidCard);
+            var transactionResult = new TransactionResult(false, "");
+            try
+            {
+                cardManager.UpdatePrepaidCard(prepaidCard);
+            }
+            catch (Exception)
+            {
+                transactionResult.HasError = true;
+                transactionResult.Message = "Σφάλμα κατά την ενημέρωση της προπληρωμένης";
+            }
+            return transactionResult;
         }
     }
 }

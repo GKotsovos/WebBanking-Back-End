@@ -31,12 +31,11 @@ namespace WebBanking.DAL
             using (var bankContext = new BankingContext())
             {
                 var transactionHistorys = bankContext.Transaction
-                    .Where(transactionHistory => transactionHistory.CustomerId == customerId)
-                    .ToList();
+                    .Where(transactionHistory => transactionHistory.CustomerId == customerId);
 
                 if (transactionHistorys != null)
                 {
-                    return transactionHistorys;
+                    return transactionHistorys.ToList();
                 }
                 else
                 {

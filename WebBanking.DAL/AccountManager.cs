@@ -12,17 +12,8 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                var account = bankContext.Account
+                return bankContext.Account
                     .FirstOrDefault(_account => _account.Id == Id);
-
-                if (account != null)
-                {
-                    return account;
-                }
-                else
-                {
-                    return null;
-                }
             }
         }
 
@@ -31,12 +22,11 @@ namespace WebBanking.DAL
             using (var bankContext = new BankingContext())
             {
                 var accounts = bankContext.Account
-                    .Where(_account => _account.CustomerId == customerId)
-                    .ToList();
+                    .Where(_account => _account.CustomerId == customerId);
 
                 if (accounts != null)
                 {
-                    return accounts;
+                    return accounts.ToList();
                 }
                 else
                 {
