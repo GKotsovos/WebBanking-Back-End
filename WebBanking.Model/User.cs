@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WebBanking.Model
 {
-    public class User
+    public partial class User
     {
         public string Id { get; set; }
         public string Password { get; set; }

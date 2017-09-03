@@ -20,42 +20,42 @@ namespace WebBanking.Services.HelperMethods
             this.loanServices = loanServices;
         }
 
-        internal IHasBalances GetProduct(string DebitProductType, string DebitProductId, out TransactionResult transactionResult)
+        internal IHasBalances GetProduct(string debitProductType, string debitProduct, out TransactionResult transactionResult)
         {
             IHasBalances product = null;
             transactionResult = new TransactionResult(false, "");
 
-            switch (DebitProductType)
+            switch (debitProductType)
             {
                 case "isAccount":
-                    product = accountServices.GetAccountById(DebitProductId, out transactionResult);
+                    product = accountServices.GetAccountById(debitProduct, out transactionResult);
                     break;
                 case "isCreditCard":
-                    product = cardServices.GetCreditCardById(DebitProductId, out transactionResult);
+                    product = cardServices.GetCreditCardById(debitProduct, out transactionResult);
                     break;
                 case "isPrepaidCard":
-                    product = cardServices.GetPrePaidCardById(DebitProductId, out transactionResult);
+                    product = cardServices.GetPrePaidCardById(debitProduct, out transactionResult);
                     break;
                 case "isLoan":
-                    product = loanServices.GetLoanById(DebitProductId, out transactionResult);
+                    product = loanServices.GetLoanById(debitProduct, out transactionResult);
                     break;
             }
 
             return product;
         }
 
-        internal TransactionResult UpdateProduct(string DebitProductType, IHasBalances DebitProduct)
+        internal TransactionResult UpdateProduct(string debitProductType, IHasBalances debitProduct)
         {
             var transactionResult = new TransactionResult(false, "");
 
             try
             {
-                switch (DebitProductType)
+                switch (debitProductType)
                 {
                     case "isAccount":
                         try
                         {
-                            accountServices.UpdateAccount(DebitProduct as Account);
+                            accountServices.UpdateAccount(debitProduct as Account);
                         }
                         catch (Exception)
                         {
@@ -65,7 +65,7 @@ namespace WebBanking.Services.HelperMethods
                     case "isCreditCard":
                         try
                         {
-                            cardServices.UpdateCreditCard(DebitProduct as CreditCard);
+                            cardServices.UpdateCreditCard(debitProduct as CreditCard);
                         }
                         catch (Exception)
                         {
@@ -75,7 +75,7 @@ namespace WebBanking.Services.HelperMethods
                     case "isPrepaidCard":
                         try
                         {
-                            cardServices.UpdatePrepaidCard(DebitProduct as PrepaidCard);
+                            cardServices.UpdatePrepaidCard(debitProduct as PrepaidCard);
                         }
                         catch (Exception)
                         {
@@ -85,7 +85,7 @@ namespace WebBanking.Services.HelperMethods
                     case "isLoan":
                         try
                         {
-                            loanServices.LoanUpdate(DebitProduct as Loan);
+                            loanServices.LoanUpdate(debitProduct as Loan);
                         }
                         catch (Exception)
                         {

@@ -77,7 +77,7 @@ namespace WebBanking.WebAPI
             var userServices = new UserServices();
 
             string customerId = userServices.Authenticate(userId, password);
-            if (customerId != null)
+            if (customerId != "")
             {
                 return Task.FromResult(new ClaimsIdentity(new GenericIdentity(userId, "Token"), 
                     new Claim[] 

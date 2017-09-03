@@ -7,8 +7,8 @@ namespace WebBanking.Model
     {
         public string Id { get; set; }
         public string CustomerId { get; set; }
-        public string CreditProduct { get; set; }
-        public string DebitProduct { get; set; }
+        public string CreditProductId { get; set; }
+        public string DebitProductId { get; set; }
         public decimal Amount { get; set; }
         public DateTime NextExecutionDate { get; set; }
         public int ExecutionsLeft { get; set; }

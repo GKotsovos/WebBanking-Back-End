@@ -24,7 +24,7 @@ namespace WebBanking.DAL
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-            optionsBuilder.UseSqlServer(@"Server=D10180W7784\SQLEXPRESS;Database=Banking;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=DESKTOP-JQNLA1D\SQLEXPRESS;Database=Banking;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -238,10 +238,6 @@ namespace WebBanking.DAL
             {
                 entity.Property(e => e.Id).HasColumnType("varchar(15)");
 
-                entity.Property(e => e.CreditProductId)
-                    .IsRequired()
-                    .HasColumnType("varchar(15)");
-
                 entity.Property(e => e.Currency)
                     .IsRequired()
                     .HasColumnType("varchar(3)");
@@ -249,6 +245,10 @@ namespace WebBanking.DAL
                 entity.Property(e => e.CustomerId)
                     .IsRequired()
                     .HasColumnType("varchar(10)");
+
+                entity.Property(e => e.DebitProductId)
+                    .IsRequired()
+                    .HasColumnType("varchar(15)");
 
                 entity.Property(e => e.ExpirationDate).HasColumnType("date");
 
@@ -299,8 +299,6 @@ namespace WebBanking.DAL
 
             modelBuilder.Entity<Transaction>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
                 entity.Property(e => e.Amount).HasColumnType("decimal");
 
                 entity.Property(e => e.Bank)
