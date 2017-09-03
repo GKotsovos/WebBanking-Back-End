@@ -12,17 +12,8 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                var loan = bankContext.Loan
+                return bankContext.Loan
                     .FirstOrDefault(_loan => _loan.Id == loanId);
-
-                if (loan != null)
-                {
-                    return loan;
-                }
-                else
-                {
-                    return null;
-                }
             }
         }
 

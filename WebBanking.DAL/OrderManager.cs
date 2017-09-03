@@ -12,17 +12,8 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                var accountOrder = bankContext.AccountOrder
+                return bankContext.AccountOrder
                     .FirstOrDefault(_accountOrder => _accountOrder.Id == accountOrderId);
-
-                if (accountOrder != null)
-                {
-                    return accountOrder;
-                }
-                else
-                {
-                    return null;
-                }
             }
         }
 
@@ -49,17 +40,8 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                var organizationOrder = bankContext.OrganizationOrder
+                return bankContext.OrganizationOrder
                     .FirstOrDefault(_organizationOrder => _organizationOrder.Id == organizationOrderId);
-
-                if (organizationOrder != null)
-                {
-                    return organizationOrder;
-                }
-                else
-                {
-                    return null;
-                }
             }
         }
 

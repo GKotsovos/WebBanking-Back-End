@@ -12,17 +12,8 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                var customer = bankContext.Customer
+                return bankContext.Customer
                     .FirstOrDefault(_customer => _customer.Id == customerId);
-
-                if (customer != null)
-                {
-                    return customer;
-                }
-                else
-                {
-                    return null;
-                }
             }
         }
     }
