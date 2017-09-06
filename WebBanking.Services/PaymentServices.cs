@@ -80,10 +80,11 @@ namespace WebBanking.Services
             transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount);
             if (!transactionResult.HasError)
             {
+                transferServices.DebitProduct(debitProduct, transaction.Amount, transaction.Expenses);
                 transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
                 if (!transactionResult.HasError)
                 {
-                    transactionServices.LogTransaction(customerId, "", debitProduct.AvailableBalance, transaction);
+                    transactionServices.LogTransaction(customerId, "ΗΛΕΚΤΡΟΝΙΚΗ ΠΛΗΡΩΜΗ", debitProduct.AvailableBalance, transaction);
                 }
             }
 
