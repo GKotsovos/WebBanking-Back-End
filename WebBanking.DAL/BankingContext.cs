@@ -8,17 +8,17 @@ namespace WebBanking.DAL
     public partial class BankingContext : DbContext
     {
         public virtual DbSet<Account> Account { get; set; }
-        public virtual DbSet<AccountOrder> AccountOrder { get; set; }
         public virtual DbSet<Bank> Bank { get; set; }
         public virtual DbSet<CreditCard> CreditCard { get; set; }
         public virtual DbSet<Customer> Customer { get; set; }
         public virtual DbSet<DebitCard> DebitCard { get; set; }
         public virtual DbSet<LinkedProducts> LinkedProducts { get; set; }
         public virtual DbSet<Loan> Loan { get; set; }
-        public virtual DbSet<OrganizationOrder> OrganizationOrder { get; set; }
         public virtual DbSet<PaymentMethod> PaymentMethod { get; set; }
+        public virtual DbSet<PaymentOrder> PaymentOrder { get; set; }
         public virtual DbSet<PrepaidCard> PrepaidCard { get; set; }
         public virtual DbSet<Transaction> Transaction { get; set; }
+        public virtual DbSet<TransferOrder> TransferOrder { get; set; }
         public virtual DbSet<User> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -54,37 +54,6 @@ namespace WebBanking.DAL
                 entity.Property(e => e.Type)
                     .IsRequired()
                     .HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<AccountOrder>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnType("varchar(15)");
-
-                entity.Property(e => e.Amount).HasColumnType("decimal");
-
-                entity.Property(e => e.Comments).HasColumnType("text");
-
-                entity.Property(e => e.CreditProductId)
-                    .IsRequired()
-                    .HasColumnType("varchar(15)");
-
-                entity.Property(e => e.Currency)
-                    .IsRequired()
-                    .HasColumnType("varchar(3)");
-
-                entity.Property(e => e.CustomerId)
-                    .IsRequired()
-                    .HasColumnType("varchar(10)");
-
-                entity.Property(e => e.DebitProductId)
-                    .IsRequired()
-                    .HasColumnType("varchar(15)");
-
-                entity.Property(e => e.ExecutionFrequency)
-                    .IsRequired()
-                    .HasColumnType("varchar(2)");
-
-                entity.Property(e => e.NextExecutionDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<Bank>(entity =>
@@ -234,31 +203,6 @@ namespace WebBanking.DAL
                     .HasMaxLength(50);
             });
 
-            modelBuilder.Entity<OrganizationOrder>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnType("varchar(15)");
-
-                entity.Property(e => e.Currency)
-                    .IsRequired()
-                    .HasColumnType("varchar(3)");
-
-                entity.Property(e => e.CustomerId)
-                    .IsRequired()
-                    .HasColumnType("varchar(10)");
-
-                entity.Property(e => e.DebitProductId)
-                    .IsRequired()
-                    .HasColumnType("varchar(15)");
-
-                entity.Property(e => e.ExpirationDate).HasColumnType("date");
-
-                entity.Property(e => e.MaxCreditAmount).HasColumnType("decimal");
-
-                entity.Property(e => e.Organization)
-                    .IsRequired()
-                    .HasMaxLength(50);
-            });
-
             modelBuilder.Entity<PaymentMethod>(entity =>
             {
                 entity.Property(e => e.Category)
@@ -270,6 +214,39 @@ namespace WebBanking.DAL
                     .HasMaxLength(100);
 
                 entity.Property(e => e.SubCategory).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<PaymentOrder>(entity =>
+            {
+                entity.Property(e => e.Charges)
+                    .HasColumnType("decimal")
+                    .HasDefaultValueSql("0");
+
+                entity.Property(e => e.Currency)
+                    .IsRequired()
+                    .HasColumnType("varchar(3)");
+
+                entity.Property(e => e.CustomerId)
+                    .IsRequired()
+                    .HasColumnType("varchar(10)");
+
+                entity.Property(e => e.DebitProductId)
+                    .IsRequired()
+                    .HasColumnType("varchar(27)");
+
+                entity.Property(e => e.ExpirationDate).HasColumnType("date");
+
+                entity.Property(e => e.MaxPaymentAmount).HasColumnType("decimal");
+
+                entity.Property(e => e.PaymentCode)
+                    .IsRequired()
+                    .HasMaxLength(27);
+
+                entity.Property(e => e.PaymentMethod)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.PreviousExecutionDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<PrepaidCard>(entity =>
@@ -340,6 +317,37 @@ namespace WebBanking.DAL
                 entity.Property(e => e.TransactionType)
                     .IsRequired()
                     .HasColumnType("varchar(6)");
+            });
+
+            modelBuilder.Entity<TransferOrder>(entity =>
+            {
+                entity.Property(e => e.Amount).HasColumnType("decimal");
+
+                entity.Property(e => e.Charges).HasColumnType("decimal");
+
+                entity.Property(e => e.Comments).HasColumnType("text");
+
+                entity.Property(e => e.CreditProductId)
+                    .IsRequired()
+                    .HasColumnType("varchar(27)");
+
+                entity.Property(e => e.Currency)
+                    .IsRequired()
+                    .HasColumnType("varchar(3)");
+
+                entity.Property(e => e.CustomTitle)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.CustomerId)
+                    .IsRequired()
+                    .HasColumnType("varchar(10)");
+
+                entity.Property(e => e.DebitProductId)
+                    .IsRequired()
+                    .HasColumnType("varchar(27)");
+
+                entity.Property(e => e.NextExecutionDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<User>(entity =>

@@ -8,7 +8,7 @@ namespace WebBanking.DAL
 {
     public class OrderManager
     {
-        public AccountOrder GetAccountOrderById(string accountOrderId)
+        public TransferOrder GetTransferOrderById(long transferOrderId)
         {
             using (var bankContext = new BankingContext())
             {
@@ -17,17 +17,19 @@ namespace WebBanking.DAL
             }
         }
 
-        public List<AccountOrder> GetAllCustomerAccountOrders(string customerId)
+        public List<TransferOrder> GetAllCustomerTransferOrders(string customerId)
         {
             using (var bankContext = new BankingContext())
             {
                 var accountOrders = bankContext.AccountOrder
                     .Where(accountOrder => accountOrder.CustomerId == customerId)
+                var transferOrders = bankContext.TransferOrder
+                    .Where(transferOrder => transferOrder.CustomerId == customerId)
                     .ToList();
 
-                if (accountOrders != null)
+                if (transferOrders != null)
                 {
-                    return accountOrders;
+                    return transferOrders;
                 }
                 else
                 {
@@ -53,9 +55,9 @@ namespace WebBanking.DAL
                     .Where(organizationOrder => organizationOrder.CustomerId == customerId)
                     .ToList();
 
-                if (organizationOrders != null)
+                if (paymentOrders != null)
                 {
-                    return organizationOrders;
+                    return paymentOrders;
                 }
                 else
                 {

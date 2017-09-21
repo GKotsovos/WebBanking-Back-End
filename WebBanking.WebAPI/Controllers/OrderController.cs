@@ -21,10 +21,10 @@ namespace WebBanking.WebAPI.Controllers
             orderServices = new OrderServices();
         }
 
-        [HttpGet("GetAllCustomerAccountOrders")]
-        public List<AccountOrder> GetAllCustomerAccountOrders()
+        [HttpGet("GetAllCustomerTransferOrders")]
+        public List<TransferOrder> GetAllCustomerTransferOrders()
         {
-            return orderServices.GetAllCustomerAccountOrders(GetCustomerId());
+            return orderServices.GetAllCustomerTransferOrders(GetCustomerId());
         }
 
         [HttpGet("GetAllCustomerOrganizationOrders")]

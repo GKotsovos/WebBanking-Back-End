@@ -16,14 +16,14 @@ namespace WebBanking.Services
             accountMamager = new OrderManager();
         }
 
-        public AccountOrder GetAccountOrder(string accountId)
+        public TransferOrder GetTransferOrder(long transferOrderId)
         {
-            return accountMamager.GetAccountOrderById(accountId);
+            return orderManager.GetTransferOrderById(transferOrderId);
         }
 
-        public List<AccountOrder> GetAllCustomerAccountOrders(string customerId)
+        public List<TransferOrder> GetAllCustomerTransferOrders(string customerId)
         {
-            return accountMamager.GetAllCustomerAccountOrders(customerId).ToList();
+            return orderManager.GetAllCustomerTransferOrders(customerId).ToList();
         }
 
         public OrganizationOrder GetOrganizationOrder(string accountId)
