@@ -12,8 +12,8 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                return bankContext.AccountOrder
-                    .FirstOrDefault(_accountOrder => _accountOrder.Id == accountOrderId);
+                return bankContext.TransferOrder
+                    .FirstOrDefault(transferOrder => transferOrder.Id == transferOrderId);
             }
         }
 
@@ -21,8 +21,6 @@ namespace WebBanking.DAL
         {
             using (var bankContext = new BankingContext())
             {
-                var accountOrders = bankContext.AccountOrder
-                    .Where(accountOrder => accountOrder.CustomerId == customerId)
                 var transferOrders = bankContext.TransferOrder
                     .Where(transferOrder => transferOrder.CustomerId == customerId)
                     .ToList();
@@ -38,21 +36,46 @@ namespace WebBanking.DAL
             }
         }
 
-        public OrganizationOrder GetOrganizationOrderById(string organizationOrderId)
+        public void InsertTransferOrder(TransferOrder transferOrder)
         {
             using (var bankContext = new BankingContext())
             {
-                return bankContext.OrganizationOrder
-                    .FirstOrDefault(_organizationOrder => _organizationOrder.Id == organizationOrderId);
+                bankContext.TransferOrder.Add(transferOrder);
+                bankContext.SaveChanges();
             }
         }
 
-        public List<OrganizationOrder> GetAllCustomerOrganizationOrders(string customerId)
+        public void DeleteTransferOrder(TransferOrder transferOrder)
         {
             using (var bankContext = new BankingContext())
             {
-                var organizationOrders = bankContext.OrganizationOrder
-                    .Where(organizationOrder => organizationOrder.CustomerId == customerId)
+                try
+                {
+                    bankContext.TransferOrder.Remove(transferOrder);
+                    bankContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
+        public PaymentOrder GetPaymentOrderById(long paymentOrderId)
+        {
+            using (var bankContext = new BankingContext())
+            {
+                return bankContext.PaymentOrder
+                    .FirstOrDefault(paymentOrder => paymentOrder.Id == paymentOrderId);
+            }
+        }
+
+        public List<PaymentOrder> GetAllCustomerPaymentOrders(string customerId)
+        {
+            using (var bankContext = new BankingContext())
+            {
+                var paymentOrders = bankContext.PaymentOrder
+                    .Where(paymentOrder => paymentOrder.CustomerId == customerId)
                     .ToList();
 
                 if (paymentOrders != null)
@@ -62,6 +85,31 @@ namespace WebBanking.DAL
                 else
                 {
                     return null;
+                }
+            }
+        }
+
+        public void InsertPaymentOrder(PaymentOrder paymentOrder)
+        {
+            using (var bankContext = new BankingContext())
+            {
+                bankContext.PaymentOrder.Add(paymentOrder);
+                bankContext.SaveChanges();
+            }
+        }
+
+        public void DeletePaymentOrder(PaymentOrder paymentOrder)
+        {
+            using (var bankContext = new BankingContext())
+            {
+                try
+                {
+                    bankContext.PaymentOrder.Remove(paymentOrder);
+                    bankContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    throw;
                 }
             }
         }
