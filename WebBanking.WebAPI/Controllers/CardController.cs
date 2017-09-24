@@ -72,6 +72,17 @@ namespace WebBanking.WebAPI.Controllers
             return linkedCardServices.GetAllCustomerDebitCardsLinkedProducts(GetCustomerId());
         }
 
+        [HttpPost("DeleteLinkedProduct")]
+        public void DeleteLinkedProduct(string cardId, string productId)
+        {
+            var transactionResult = new TransactionResult(false, "");
+            transactionResult = linkedCardServices.DeleteLinkedProduct(cardId, productId);
+            if (transactionResult.HasError)
+            {
+                ReturnErrorResponse(transactionResult.Message);
+            }
+        }
+
         private void ReturnErrorResponse(string errorMessage)
         {
             Response.ContentType = "application/json";

@@ -16,11 +16,6 @@ namespace WebBanking.Services
             cardManager = new CardManager();
         }
 
-        public void DeleteLinkedProduct(string cardId, string productId)
-        {
-            cardManager.DeleteLinkedProduct(cardId, productId);
-        }
-
         public CreditCard GetCreditCardById(string cardId, out TransactionResult transactionResult)
         {
             transactionResult = new TransactionResult(false, "");

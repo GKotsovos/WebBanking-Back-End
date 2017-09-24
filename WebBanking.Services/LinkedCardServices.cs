@@ -53,5 +53,20 @@ namespace WebBanking.Services
 
             return cardWithLinkedProducts;
         }
+
+        public TransactionResult DeleteLinkedProduct(string cardId, string productId)
+        {
+            var transactionResult = new TransactionResult(false, "");
+            try
+            {
+                cardManager.DeleteLinkedProduct(cardId, productId);
+            }
+            catch (Exception)
+            {
+                transactionResult.HasError = true;
+                transactionResult.Message = "Σφάλμα κατά της διαγραφή της σύνδεσης";
+            }
+            return transactionResult;
+        }
     }
 }
