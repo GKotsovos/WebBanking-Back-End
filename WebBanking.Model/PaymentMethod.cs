@@ -9,5 +9,6 @@ namespace WebBanking.Model
         public string Category { get; set; }
         public string SubCategory { get; set; }
         public string Name { get; set; }
+        public decimal Charges { get; set; }
     }
 }

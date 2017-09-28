@@ -209,6 +209,10 @@ namespace WebBanking.DAL
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.Charges)
+                    .HasColumnType("decimal")
+                    .HasDefaultValueSql("1");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100);
