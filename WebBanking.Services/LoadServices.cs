@@ -42,7 +42,7 @@ namespace WebBanking.Services
                         transactionResult = cardServices.UpdatePrepaidCard(prepaidCard);
                         if (!transactionResult.HasError)
                         {
-                            transactionServices.LogTransaction(customerId, "ΦΟΡΤΙΣΗ ΠΡΟΠΛΗΡΩΜΕΝΗΣ", debitProduct.AvailableBalance, transaction);
+                            transactionServices.LogTransaction(customerId, "ΦΟΡΤΙΣΗ ΠΡΟΠΛ. ΚΑΡΤΑΣ", debitProduct.AvailableBalance, transaction);
                         }
                     }
                 }

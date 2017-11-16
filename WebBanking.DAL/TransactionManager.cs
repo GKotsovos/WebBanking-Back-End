@@ -8,12 +8,14 @@ namespace WebBanking.DAL
 {
     public class TransactionManager
     {
-        public List<Transaction> GetTransactionByProductId(string productId)
+        public List<Transaction> GetProductTransactionsByTimePeriod(string productId, DateTime startDate, DateTime endDate)
         {
             using (var bankContext = new BankingContext())
             {
                 var transactionHistory = bankContext.Transaction
-                    .Where(_transaction => _transaction.DebitProductId == productId);
+                    .Where(transaction => transaction.DebitProductId == productId && 
+                        transaction.Date >= startDate && 
+                        transaction.Date <= endDate);
 
                 if (transactionHistory != null)
                 {

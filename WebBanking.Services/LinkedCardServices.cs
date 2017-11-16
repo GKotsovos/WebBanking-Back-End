@@ -59,13 +59,22 @@ namespace WebBanking.Services
             var transactionResult = new TransactionResult(false, "");
             try
             {
-                cardManager.DeleteLinkedProduct(cardId, productId);
+                int linkedProductsCount = cardManager.GetDebitCardLinkedProducts(cardId).Count;
+                if (linkedProductsCount != 1)
+                {
+                    cardManager.DeleteLinkedProduct(cardId, productId);
+                }
+                else
+                {
+                    transactionResult.HasError = true;
+                    transactionResult.Message = "Η κάρτα πρέπει να έχει τουλάχιστον ένα συνδεδεμένο προϊόν";
+                }
             }
             catch (Exception)
             {
                 transactionResult.HasError = true;
                 transactionResult.Message = "Σφάλμα κατά της διαγραφή της σύνδεσης";
-            }
+            }            
             return transactionResult;
         }
     }

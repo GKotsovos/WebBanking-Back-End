@@ -21,10 +21,17 @@ namespace WebBanking.WebAPI.Controllers
             transactionServices = new TransactionServices();
         }
         
-        [HttpGet("GetProductTransactionHistory/{id}")]
-        public List<Transaction> GetProductTransactionHistory(string id)
+        [HttpGet("GetCurrentMonthProductTransactionHistory/{id}")]
+        public List<Transaction> GetCurrentMonthProductTransactionHistory(string id)
         {
-            return transactionServices.GetProductTransaction(id);
+            return transactionServices.GetCurrentMonthProductTransactions(id);
+        }
+
+        [HttpPost("GetProductTransactionHistoryByTimePeriod")]
+        public List<Transaction> GetProductTransactionsByTimePeriod(string productId, DateTime startDate, DateTime endDate)
+        {
+
+            return transactionServices.GetProductTransactionsByTimePeriod(productId, startDate, endDate);
         }
 
         private string GetCustomerId()

@@ -16,10 +16,20 @@ namespace WebBanking.Services
             transactionManager = new TransactionManager();
         }
 
-        public List<Transaction> GetProductTransaction(string productId)
+        public List<Transaction> GetCurrentMonthProductTransactions(string productId)
         {
-            var transactionHistory = transactionManager.GetTransactionByProductId(productId);
+            var startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1.0);
+            var transactionHistory = transactionManager.GetProductTransactionsByTimePeriod(productId, startDate, endDate);
             transactionHistory.Sort((x,y) => x.Date.CompareTo(y.Date));
+            transactionHistory.Reverse();
+            return transactionHistory;
+        }
+
+        public List<Transaction> GetProductTransactionsByTimePeriod(string productId, DateTime startDate, DateTime endDate)
+        {
+            var transactionHistory = transactionManager.GetProductTransactionsByTimePeriod(productId, startDate, endDate);
+            transactionHistory.Sort((x, y) => x.Date.CompareTo(y.Date));
             transactionHistory.Reverse();
             return transactionHistory;
         }
