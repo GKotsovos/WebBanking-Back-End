@@ -37,7 +37,7 @@ namespace WebBanking.WebAPI.Controllers
         public CreditCard GetCreditCardById(string id)
         {
             var transactionResult = new TransactionResult(false, "");
-            var creditCard =  cardServices.GetCreditCardById(id, out transactionResult);
+            var creditCard =  cardServices.GetCreditCardById(id, out transactionResult, "greek");
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -49,7 +49,7 @@ namespace WebBanking.WebAPI.Controllers
         public PrepaidCard GetPrepaidCardById(string id)
         {
             var transactionResult = new TransactionResult(false, "");
-            var prepaidCard =  cardServices.GetPrePaidCardById(id, out transactionResult);
+            var prepaidCard =  cardServices.GetPrePaidCardById(id, out transactionResult, "greek");
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -73,10 +73,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("DeleteLinkedProduct")]
-        public void DeleteLinkedProduct(string cardId, string productId)
+        public void DeleteLinkedProduct(string cardId, string productId, string language)
         {
             var transactionResult = new TransactionResult(false, "");
-            transactionResult = linkedCardServices.DeleteLinkedProduct(cardId, productId);
+            transactionResult = linkedCardServices.DeleteLinkedProduct(cardId, productId, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

@@ -24,7 +24,7 @@ namespace WebBanking.Services
             var transactionResult = new TransactionResult(false, "");
             var linkedProducts = cardManager
                 .GetDebitCardLinkedProducts(cardId)
-                .Select(linkedProduct => accountServices.GetAccountById(linkedProduct.ProductId, out transactionResult))
+                .Select(linkedProduct => accountServices.GetAccountById(linkedProduct.ProductId, out transactionResult, "greek"))
                 .ToList();
             return new DebitCardWithLinkedProducts(debitCard, linkedProducts);
         }
@@ -45,7 +45,7 @@ namespace WebBanking.Services
                     if (debitCard.Id == linkedProdct.CardId)
                     {
                         var transactionResult = new TransactionResult(false, "");
-                        linkedAccounts.Add(accountServices.GetAccountById(linkedProdct.ProductId, out transactionResult));
+                        linkedAccounts.Add(accountServices.GetAccountById(linkedProdct.ProductId, out transactionResult, "greek"));
                     }
                 }
                 cardWithLinkedProducts.Add(new DebitCardWithLinkedProducts(debitCard, linkedAccounts));
@@ -54,7 +54,7 @@ namespace WebBanking.Services
             return cardWithLinkedProducts;
         }
 
-        public TransactionResult DeleteLinkedProduct(string cardId, string productId)
+        public TransactionResult DeleteLinkedProduct(string cardId, string productId, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             try
@@ -67,13 +67,15 @@ namespace WebBanking.Services
                 else
                 {
                     transactionResult.HasError = true;
-                    transactionResult.Message = "Η κάρτα πρέπει να έχει τουλάχιστον ένα συνδεδεμένο προϊόν";
+                    transactionResult.Message = language == "greek" ? "Η κάρτα πρέπει να έχει τουλάχιστον ένα συνδεδεμένο προϊόν" :
+                        "The card must have at least one linked product";
                 }
             }
             catch (Exception)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Σφάλμα κατά της διαγραφή της σύνδεσης";
+                transactionResult.Message = language == "greek" ? "Σφάλμα κατά της διαγραφή της σύνδεσης":
+                    "There was an error during the deletion of the linkage";
             }            
             return transactionResult;
         }

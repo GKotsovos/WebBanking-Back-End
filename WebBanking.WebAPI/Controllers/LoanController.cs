@@ -26,7 +26,7 @@ namespace WebBanking.WebAPI.Controllers
         public Loan GetLoanById(string id)
         {
             var transactionResult = new TransactionResult(false, "");
-            var loan =  loanServices.GetLoanById(id, out transactionResult);
+            var loan =  loanServices.GetLoanById(id, out transactionResult, "greek");
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

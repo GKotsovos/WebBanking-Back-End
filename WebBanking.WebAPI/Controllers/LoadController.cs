@@ -28,10 +28,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("PrepaidCardLoad")]
-        public void PrepaidCardLoad(TransactionDTO transaction)
+        public void PrepaidCardLoad(TransactionDTO transaction, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = loadServices.PrepaidCardLoad(GetCustomerId(), transaction);
+            transactionResult = loadServices.PrepaidCardLoad(GetCustomerId(), transaction, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

@@ -16,14 +16,14 @@ namespace WebBanking.Services
             loanManager = new LoanManager();
         }
 
-        public Loan GetLoanById(string loanId, out TransactionResult transactionResult)
+        public Loan GetLoanById(string loanId, out TransactionResult transactionResult, string language)
         {
             transactionResult = new TransactionResult(false, "");
             var loan =  loanManager.GetLoanById(loanId);
             if (loan == null)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Το δάνειο δε βρέθηκε";
+                transactionResult.Message = language == "greek" ? "Το δάνειο δε βρέθηκε" : "The loan was not found";
             }
             return loan;
         }

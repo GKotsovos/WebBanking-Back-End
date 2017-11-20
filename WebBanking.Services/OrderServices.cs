@@ -26,7 +26,7 @@ namespace WebBanking.Services
             return orderManager.GetAllCustomerTransferOrders(customerId).ToList();
         }
 
-        public TransactionResult CreateTransferOrder(string customerId, TransferOrder transferOrder)
+        public TransactionResult CreateTransferOrder(string customerId, TransferOrder transferOrder, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             transferOrder.CustomerId = customerId;
@@ -37,12 +37,13 @@ namespace WebBanking.Services
             catch (Exception)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Σφάλμα κατά την δημιουργία της πάγιας εντολής";
+                transactionResult.Message = language == "greek" ? "Σφάλμα κατά την δημιουργία της πάγιας εντολής μεταφοράς" :
+                    "There was an error while creating the order";
             }
             return transactionResult;
         }
 
-        public TransactionResult CancelTransferOrder(string customerId, long transferOrderId)
+        public TransactionResult CancelTransferOrder(string customerId, long transferOrderId, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             try
@@ -53,7 +54,8 @@ namespace WebBanking.Services
             catch (Exception)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Σφάλμα κατά την ακύρωση της πάγιας εντολής";
+                transactionResult.Message = language == "greek" ? "Σφάλμα κατά την ακύρωση της πάγιας εντολής μεταφοράς" :
+                    "There was an error while canceling the order";
             }
             return transactionResult;
         }
@@ -68,7 +70,7 @@ namespace WebBanking.Services
             return orderManager.GetAllCustomerPaymentOrders(customerId).ToList();
         }
 
-        public TransactionResult CreatePaymentOrder(string customerId, PaymentOrder paymentOrder)
+        public TransactionResult CreatePaymentOrder(string customerId, PaymentOrder paymentOrder, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             paymentOrder.CustomerId = customerId;
@@ -80,12 +82,13 @@ namespace WebBanking.Services
             catch (Exception)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Σφάλμα κατά την δημιουργία της πάγιας εντολής";
+                transactionResult.Message = language == "greek" ? "Σφάλμα κατά την δημιουργία της πάγιας εντολής πληρωμής" :
+                    "There was an error while creating the order";
             }
             return transactionResult;
         }
 
-        public TransactionResult CancelPaymentOrder(string customerId, long paymentOrderId)
+        public TransactionResult CancelPaymentOrder(string customerId, long paymentOrderId, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             try
@@ -96,7 +99,8 @@ namespace WebBanking.Services
             catch (Exception)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Σφάλμα κατά την ακύρωση της πάγιας εντολής";
+                transactionResult.Message = language == "greek" ? "Σφάλμα κατά την ακύρωση της πάγιας εντολής πλήρωμής" :
+                    "There was an error while canceling the payment order";
             }
             return transactionResult;
         }

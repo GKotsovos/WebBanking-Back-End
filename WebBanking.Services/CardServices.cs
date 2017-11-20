@@ -16,14 +16,14 @@ namespace WebBanking.Services
             cardManager = new CardManager();
         }
 
-        public CreditCard GetCreditCardById(string cardId, out TransactionResult transactionResult)
+        public CreditCard GetCreditCardById(string cardId, out TransactionResult transactionResult, string language)
         {
             transactionResult = new TransactionResult(false, "");
             var creditCard =  cardManager.GetCreditCardById(cardId);
             if (creditCard == null)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Η πιστωτική κάρτα δε βρέθηκε";
+                transactionResult.Message = language == "greek" ? "Η πιστωτική κάρτα δε βρέθηκε" : "The credit card was not found";
             }
             return creditCard;
         }
@@ -38,14 +38,14 @@ namespace WebBanking.Services
             return cardManager.GetAllCustomerCreditCards(customerId);
         }
 
-        public PrepaidCard GetPrePaidCardById(string cardId, out TransactionResult transactionResult)
+        public PrepaidCard GetPrePaidCardById(string cardId, out TransactionResult transactionResult, string language)
         {
             transactionResult = new TransactionResult(false, "");
             var prepaidCard =  cardManager.GetPrepaidCardById(cardId);
             if (prepaidCard == null)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Η προπληρωμένη κάρτα δε βρέθηκε";
+                transactionResult.Message = language == "greek" ? "Η προπληρωμένη κάρτα δε βρέθηκε" : "The prepaid card was not found";
             }
             return prepaidCard;
         }
@@ -55,7 +55,7 @@ namespace WebBanking.Services
             return cardManager.GetAllCustomerPrepaidCards(customerId);
         }
 
-        public TransactionResult UpdatePrepaidCard(PrepaidCard prepaidCard)
+        public TransactionResult UpdatePrepaidCard(PrepaidCard prepaidCard, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             try
@@ -65,7 +65,7 @@ namespace WebBanking.Services
             catch (Exception)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Σφάλμα κατά την ενημέρωση της προπληρωμένης";
+                transactionResult.Message = language == "greek" ? "Σφάλμα κατά την ενημέρωση της προπληρωμένης" : "There was a problem while updating the prepaid card";
             }
             return transactionResult;
         }

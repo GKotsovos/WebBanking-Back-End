@@ -23,10 +23,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("Transfer")]
-        public void Transfer(TransactionDTO transaction)
+        public void Transfer(TransactionDTO transaction, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = transferServices.Transfer(GetCustomerId(), transaction);
+            transactionResult = transferServices.Transfer(GetCustomerId(), transaction, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

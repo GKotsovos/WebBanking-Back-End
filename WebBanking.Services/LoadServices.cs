@@ -24,22 +24,22 @@ namespace WebBanking.Services
             helper = new Helper(accountServices, cardServices, loanServices);
         }
 
-        public TransactionResult PrepaidCardLoad(string customerId, TransactionDTO transaction)
+        public TransactionResult PrepaidCardLoad(string customerId, TransactionDTO transaction, string language)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
-            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult);
-            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount);
+            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult, language);
+            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount, language);
             if (!transactionResult.HasError)
             {
-                var prepaidCard = cardServices.GetPrePaidCardById(transaction.CreditProductId, out transactionResult);
+                var prepaidCard = cardServices.GetPrePaidCardById(transaction.CreditProductId, out transactionResult, language);
                 if (!transactionResult.HasError)
                 {
                     transferServices.DebitProduct(debitProduct, transaction.Amount, transaction.Expenses);
                     LoadPrepaidCard(prepaidCard, transaction.Amount);
-                    transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
+                    transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct, language);
                     if (!transactionResult.HasError)
                     {
-                        transactionResult = cardServices.UpdatePrepaidCard(prepaidCard);
+                        transactionResult = cardServices.UpdatePrepaidCard(prepaidCard, language);
                         if (!transactionResult.HasError)
                         {
                             transactionServices.LogTransaction(customerId, "ΦΟΡΤΙΣΗ ΠΡΟΠΛ. ΚΑΡΤΑΣ", debitProduct.AvailableBalance, transaction);

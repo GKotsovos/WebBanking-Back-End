@@ -16,14 +16,14 @@ namespace WebBanking.Services
             accountMamager = new AccountManager();
         }
 
-        public Account GetAccountById(string Id, out TransactionResult transactionResult)
+        public Account GetAccountById(string Id, out TransactionResult transactionResult, string language)
         {
             transactionResult = new TransactionResult(false, "");
             var account = accountMamager.GetAccountById(Id);
             if (account == null)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Ο λογαριασμός δε βρέθηκε";
+                transactionResult.Message = language == "greek" ? "Ο λογαριασμός δε βρέθηκε" : "The account was not found";
             }
             return account;
         }
@@ -33,7 +33,7 @@ namespace WebBanking.Services
             return accountMamager.GetAllCustomerAccounts(customerId).ToList();
         }
 
-        public TransactionResult UpdateAccount(Account account)
+        public TransactionResult UpdateAccount(Account account, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             try
@@ -43,7 +43,7 @@ namespace WebBanking.Services
             catch (Exception)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Λάθος κατά την ενημέρωση του λογαριασμού";
+                transactionResult.Message = language == "greek" ? "Λάθος κατά την ενημέρωση του λογαριασμού" : "There was a problem while updating the account";
             }
             return transactionResult;
         }

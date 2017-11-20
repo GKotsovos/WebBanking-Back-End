@@ -35,10 +35,10 @@ namespace WebBanking.WebAPI.Controllers
 
 
         [HttpPost("CreditCardPayment")]
-        public void CreditCardPayment(TransactionDTO transaction)
+        public void CreditCardPayment(TransactionDTO transaction, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = paymentServices.AgilePayment(GetCustomerId(), "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ", transaction);
+            transactionResult = paymentServices.AgilePayment(GetCustomerId(), "ΠΛΗΡΩΜΗ ΠΙΣΤΩΤΙΚΗΣ", transaction, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -46,10 +46,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("LoanPayment")]
-        public void LoanPayment(TransactionDTO transaction)
+        public void LoanPayment(TransactionDTO transaction, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = paymentServices.AgilePayment(GetCustomerId(), "ΠΛΗΡΩΜΗ ΔΑΝΕΙΟΥ", transaction);
+            transactionResult = paymentServices.AgilePayment(GetCustomerId(), "ΠΛΗΡΩΜΗ ΔΑΝΕΙΟΥ", transaction, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -57,10 +57,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("ThirdPartyPayment")]
-        public void ThridPartyPayment(TransactionDTO transaction)
+        public void ThridPartyPayment(TransactionDTO transaction, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = paymentServices.ThirdPartyPayment(GetCustomerId(), transaction);
+            transactionResult = paymentServices.ThirdPartyPayment(GetCustomerId(), transaction, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

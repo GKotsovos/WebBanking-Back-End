@@ -20,7 +20,7 @@ namespace WebBanking.Services.HelperMethods
             this.loanServices = loanServices;
         }
 
-        internal IHasBalances GetProduct(string debitProductType, string debitProduct, out TransactionResult transactionResult)
+        internal IHasBalances GetProduct(string debitProductType, string debitProduct, out TransactionResult transactionResult, string language)
         {
             IHasBalances product = null;
             transactionResult = new TransactionResult(false, "");
@@ -28,23 +28,23 @@ namespace WebBanking.Services.HelperMethods
             switch (debitProductType)
             {
                 case "isAccount":
-                    product = accountServices.GetAccountById(debitProduct, out transactionResult);
+                    product = accountServices.GetAccountById(debitProduct, out transactionResult, language);
                     break;
                 case "isCreditCard":
-                    product = cardServices.GetCreditCardById(debitProduct, out transactionResult);
+                    product = cardServices.GetCreditCardById(debitProduct, out transactionResult, language);
                     break;
                 case "isPrepaidCard":
-                    product = cardServices.GetPrePaidCardById(debitProduct, out transactionResult);
+                    product = cardServices.GetPrePaidCardById(debitProduct, out transactionResult, language);
                     break;
                 case "isLoan":
-                    product = loanServices.GetLoanById(debitProduct, out transactionResult);
+                    product = loanServices.GetLoanById(debitProduct, out transactionResult, language);
                     break;
             }
 
             return product;
         }
 
-        internal TransactionResult UpdateProduct(string debitProductType, IHasBalances debitProduct)
+        internal TransactionResult UpdateProduct(string debitProductType, IHasBalances debitProduct, string language)
         {
             var transactionResult = new TransactionResult(false, "");
 
@@ -55,11 +55,13 @@ namespace WebBanking.Services.HelperMethods
                     case "isAccount":
                         try
                         {
-                            accountServices.UpdateAccount(debitProduct as Account);
+                            accountServices.UpdateAccount(debitProduct as Account, language);
                         }
                         catch (Exception)
                         {
-                            throw new Exception("Λάθος κατά την χρέωση του λογαριασμού");
+                            string errorMessage = language == "greek" ? "Λάθος κατά την χρέωση του λογαριασμού" : 
+                                "There was a problem during the debit of the account";
+                            throw new Exception(errorMessage);
                         }
                         break;
                     case "isCreditCard":
@@ -69,17 +71,21 @@ namespace WebBanking.Services.HelperMethods
                         }
                         catch (Exception)
                         {
-                            throw new Exception("Λάθος κατά την χρέωση της πιστωτικής κάρτας");
+                            string errorMessage = language == "greek" ? "Λάθος κατά την χρέωση της πιστωτικής κάρτας" : 
+                                "There was a problem during the debit of the credit card";
+                            throw new Exception(errorMessage);
                         }
                         break;
                     case "isPrepaidCard":
                         try
                         {
-                            cardServices.UpdatePrepaidCard(debitProduct as PrepaidCard);
+                            cardServices.UpdatePrepaidCard(debitProduct as PrepaidCard, language);
                         }
                         catch (Exception)
                         {
-                            throw new Exception("Λάθος κατά την χρέωση της προπληρωμένης κάρτας");
+                            string errorMessage = language == "greek" ? "Λάθος κατά την χρέωση της προπληρωμένης κάρτας" : 
+                                "There was a problem during the debit of the prepaid card";
+                            throw new Exception(errorMessage);
                         }
                         break;
                     case "isLoan":
@@ -89,7 +95,9 @@ namespace WebBanking.Services.HelperMethods
                         }
                         catch (Exception)
                         {
-                            throw new Exception("Λάθος κατά την χρέωση του δανείου");
+                            string errorMessage = language == "greek" ? "Λάθος κατά την χρέωση του δανείου" :
+                                "There was a problem during the debit of the loan";
+                            throw new Exception(errorMessage);
                         }
                         break;
                 }

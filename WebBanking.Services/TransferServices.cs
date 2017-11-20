@@ -20,34 +20,34 @@ namespace WebBanking.Services
             helper = new Helper(accountServices, cardServices, loanServices);
         }
 
-        public TransactionResult CheckDebitBalance(IHasBalances debitProduct, decimal debitAmount)
+        public TransactionResult CheckDebitBalance(IHasBalances debitProduct, decimal debitAmount, string language)
         {
             TransactionResult transactionResult = new TransactionResult(false, "");
             if (debitProduct.AvailableBalance <= 0 || debitProduct.AvailableBalance < debitAmount)
             {
                 transactionResult.HasError = true;
-                transactionResult.Message = "Λάθος υπόλοιπο λογαριασμού";
+                transactionResult.Message = language == "greek" ? "Λάθος υπόλοιπο λογαριασμού" : "Incorrect account balance";
             }
             return transactionResult;
         }
 
-        public TransactionResult Transfer(string customerId, TransactionDTO transaction)
+        public TransactionResult Transfer(string customerId, TransactionDTO transaction, string language)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult);
-            transactionResult = CheckDebitBalance(debitProduct, transaction.Amount);
+            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult, language);
+            transactionResult = CheckDebitBalance(debitProduct, transaction.Amount, language);
             if (!transactionResult.HasError)
             {
                 DebitProduct(debitProduct, transaction.Amount, transaction.Expenses);
-                transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
+                transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct, language);
                 if (!transactionResult.HasError && transaction.Bank == "AGILGRAA")
                 {
-                    Account creditProduct = accountServices.GetAccountById(transaction.CreditProductId, out transactionResult);
+                    Account creditProduct = accountServices.GetAccountById(transaction.CreditProductId, out transactionResult, language);
                     if (!transactionResult.HasError)
                     {
                         CreditProduct(creditProduct, transaction.Amount);
-                        transactionResult = accountServices.UpdateAccount(creditProduct);
+                        transactionResult = accountServices.UpdateAccount(creditProduct, language);
                     }
                 }
                 if (!transactionResult.HasError)

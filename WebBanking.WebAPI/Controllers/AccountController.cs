@@ -26,7 +26,7 @@ namespace WebBanking.WebAPI.Controllers
         public Account GetAccountById(string id)
         {
             var transactionResult = new TransactionResult(false, "");
-            var account = accountServices.GetAccountById(id, out transactionResult);
+            var account = accountServices.GetAccountById(id, out transactionResult, "greek");
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

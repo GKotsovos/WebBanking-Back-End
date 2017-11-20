@@ -28,39 +28,41 @@ namespace WebBanking.Services
             return paymentManager.GetPaymentMethods();
         }
 
-        public TransactionResult CheckDebt(IHasInstallment productForPayment, decimal paymentAmount)
+        public TransactionResult CheckDebt(IHasInstallment productForPayment, decimal paymentAmount, string language)
         {
             var transactionResult = new TransactionResult(false, "");
 
             if ((productForPayment.NextInstallmentAmount < paymentAmount) && (productForPayment.Debt < paymentAmount))
             {
-                transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από το σύνολο οφειλών");
+                string errorMessage = language == "greek" ? "Το ποσό πληρωμής είναι μεγαλύτερο από το σύνολο οφειλών" : "The payment amount is bigger than the total debt";
+                transactionResult = new TransactionResult(true, errorMessage);
             }
             else if (productForPayment.NextInstallmentAmount < paymentAmount)
             {
-                transactionResult = new TransactionResult(true, "Το ποσό πληρωμής είναι μεγαλύτερο από την τρέχων οφειλή");
+                string errorMessage = language == "greek" ? "Το ποσό πληρωμής είναι μεγαλύτερο από την τρέχων οφειλή" : "The payment amount is bigger than the current installment";
+                transactionResult = new TransactionResult(true, errorMessage);
             }
 
             return transactionResult;
         }
 
-        public TransactionResult AgilePayment(string customerId, string title, TransactionDTO transaction)
+        public TransactionResult AgilePayment(string customerId, string title, TransactionDTO transaction, string language)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult);
-            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount);
-            IHasInstallment productForPayment = (IHasInstallment)helper.GetProduct(transaction.CreditProductType, transaction.CreditProductId, out transactionResult);
+            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult, language);
+            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount, language);
+            IHasInstallment productForPayment = (IHasInstallment)helper.GetProduct(transaction.CreditProductType, transaction.CreditProductId, out transactionResult, language);
             if (!transactionResult.HasError)
             {
-                transactionResult = CheckDebt(productForPayment, transaction.Amount);
+                transactionResult = CheckDebt(productForPayment, transaction.Amount, language);
                 if (!transactionResult.HasError)
                 {
                     Payment(debitProduct, productForPayment, transaction.Amount, transaction.Expenses);
-                    transactionResult = helper.UpdateProduct(transaction.CreditProductType, (IHasBalances)productForPayment);
+                    transactionResult = helper.UpdateProduct(transaction.CreditProductType, (IHasBalances)productForPayment, language);
                     if (!transactionResult.HasError)
                     {
-                        transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
+                        transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct, language);
                         if (!transactionResult.HasError)
                         {
                             transactionServices.LogTransaction(customerId, title, debitProduct.AvailableBalance, transaction);
@@ -72,16 +74,16 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult ThirdPartyPayment(string customerId, TransactionDTO transaction)
+        public TransactionResult ThirdPartyPayment(string customerId, TransactionDTO transaction, string language)
         {
             var transactionResult = new TransactionResult(false, "");
 
-            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult);
-            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount);
+            IHasBalances debitProduct = helper.GetProduct(transaction.DebitProductType, transaction.DebitProductId, out transactionResult, language);
+            transactionResult = transferServices.CheckDebitBalance(debitProduct, transaction.Amount, language);
             if (!transactionResult.HasError)
             {
                 transferServices.DebitProduct(debitProduct, transaction.Amount, transaction.Expenses);
-                transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct);
+                transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct, language);
                 if (!transactionResult.HasError)
                 {
                     transactionServices.LogTransaction(customerId, "ΗΛΕΚΤΡΟΝΙΚΗ ΠΛΗΡΩΜΗ", debitProduct.AvailableBalance, transaction);

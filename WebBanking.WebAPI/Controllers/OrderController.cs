@@ -29,10 +29,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("CreateTransferOrder")]
-        public void CreateTransferOrder(TransferOrder transferOrder)
+        public void CreateTransferOrder(TransferOrder transferOrder, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = orderServices.CreateTransferOrder(GetCustomerId(), transferOrder);
+            transactionResult = orderServices.CreateTransferOrder(GetCustomerId(), transferOrder, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -40,10 +40,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("CancelTransferOrder")]
-        public void CancelTransferOrder(long transferOrderId)
+        public void CancelTransferOrder(long transferOrderId, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = orderServices.CancelTransferOrder(GetCustomerId(), transferOrderId);
+            transactionResult = orderServices.CancelTransferOrder(GetCustomerId(), transferOrderId, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -57,10 +57,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("CreatePaymentOrder")]
-        public void CreatePaymentOrder(PaymentOrder paymentOrder)
+        public void CreatePaymentOrder(PaymentOrder paymentOrder, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = orderServices.CreatePaymentOrder(GetCustomerId(), paymentOrder);
+            transactionResult = orderServices.CreatePaymentOrder(GetCustomerId(), paymentOrder, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -69,10 +69,10 @@ namespace WebBanking.WebAPI.Controllers
         }
 
         [HttpPost("CancelPaymentOrder")]
-        public void CancelPaymentOrder(long paymentOrderId)
+        public void CancelPaymentOrder(long paymentOrderId, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = orderServices.CancelPaymentOrder(GetCustomerId(), paymentOrderId);
+            transactionResult = orderServices.CancelPaymentOrder(GetCustomerId(), paymentOrderId, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
