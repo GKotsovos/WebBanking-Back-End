@@ -17,6 +17,7 @@ namespace WebBanking.Model
         public decimal Amount { get; set; }
         public string Currency { get; set; }
         public DateTime Date { get; set; }
+        public bool IsAsap { get; set; }
         public decimal Expenses { get; set; }
         public string Comments { get; set; }
     }

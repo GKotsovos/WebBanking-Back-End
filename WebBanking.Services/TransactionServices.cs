@@ -52,7 +52,7 @@ namespace WebBanking.Services
             transaction.Currency = transactionDTO.Currency;
             transaction.Title = title;
             transaction.NewBalance = newAvailableAmount;
-            transaction.Date = transactionDTO.Date;
+            transaction.Date = transactionDTO.IsAsap ? DateTime.Now : transactionDTO.Date;
             transactionManager.AddTransaction(transaction);
         }
     }
