@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>WebBanking.Services</AssemblyName>
+    <PackageId>WebBanking.Services</PackageId>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebBanking.DAL\WebBanking.DAL.csproj" />
+    <ProjectReference Include="..\WebBanking.Model\WebBanking.Model.csproj" />
+  </ItemGroup>
+
+</Project>

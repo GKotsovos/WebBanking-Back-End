@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Simple authentication token provider for ASP.NET Core.</Description>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>WebBanking.TokenProvider</AssemblyName>
+    <PackageId>WebBanking.TokenProvider</PackageId>
+    <PackageTags>token;authentication;security;jwt</PackageTags>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="1.1.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.1.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.1.2" />
+  </ItemGroup>
+
+</Project>

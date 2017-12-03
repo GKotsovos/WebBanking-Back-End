@@ -1,12 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebBanking.Model", "WebBanking.Model\WebBanking.Model.xproj", "{632781CB-B13C-4B4F-8404-565D90D23609}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebBanking.DAL", "WebBanking.DAL\WebBanking.DAL.xproj", "{1338335D-3582-42C0-90DD-AE122209279C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0.Model", "0.Model", "{8B0A5875-668B-4A1C-A332-9CDFBE4C9FB4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1.DAL", "1.DAL", "{07A4C01F-513C-4B95-8960-C0F892391C97}"
@@ -15,11 +11,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2.Business", "2.Business", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3.API", "3.API", "{E8506B23-32AB-4C91-9AD8-325281C84DF4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebBanking.TokenProvider", "WebBanking.TokenProvider\WebBanking.TokenProvider.xproj", "{3FD9BE36-C281-4823-9301-EF6C72BF9ACF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBanking.Model", "WebBanking.Model\WebBanking.Model.csproj", "{632781CB-B13C-4B4F-8404-565D90D23609}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebBanking.WebAPI", "WebBanking.WebAPI\WebBanking.WebAPI.xproj", "{D57D01C5-015E-4DEE-AD91-E9BC80F62ED7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBanking.DAL", "WebBanking.DAL\WebBanking.DAL.csproj", "{1338335D-3582-42C0-90DD-AE122209279C}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebBanking.Services", "WebBanking.Services\WebBanking.Services.xproj", "{22BAF054-4440-42A7-A386-4259D39B3BE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBanking.TokenProvider", "WebBanking.TokenProvider\WebBanking.TokenProvider.csproj", "{3FD9BE36-C281-4823-9301-EF6C72BF9ACF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBanking.WebAPI", "WebBanking.WebAPI\WebBanking.WebAPI.csproj", "{D57D01C5-015E-4DEE-AD91-E9BC80F62ED7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBanking.Services", "WebBanking.Services\WebBanking.Services.csproj", "{22BAF054-4440-42A7-A386-4259D39B3BE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,5 +57,8 @@ Global
 		{3FD9BE36-C281-4823-9301-EF6C72BF9ACF} = {E8506B23-32AB-4C91-9AD8-325281C84DF4}
 		{D57D01C5-015E-4DEE-AD91-E9BC80F62ED7} = {E8506B23-32AB-4C91-9AD8-325281C84DF4}
 		{22BAF054-4440-42A7-A386-4259D39B3BE8} = {A948BFC1-46EF-4DBF-8A93-868F5B78B2B5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B6496302-1B52-4E68-977E-FF12CD7BA67C}
 	EndGlobalSection
 EndGlobal
