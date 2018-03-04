@@ -3,12 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Cors;
 
 namespace WebBanking.WebAPI
 {
@@ -29,25 +23,15 @@ namespace WebBanking.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            //services.AddCors();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            //app.UseCors(builder => builder.AllowAnyOrigin()
-            //                              .AllowAnyMethod()
-            //                              .AllowAnyHeader()
-            //                              .AllowCredentials());
-
             loggerFactory.AddConsole(LogLevel.Debug);
             loggerFactory.AddDebug();
-
             ConfigureAuth(app);
-
             app.UseStaticFiles();
-
             app.UseMvc();
-
         }
     }
 }

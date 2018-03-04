@@ -24,8 +24,6 @@ namespace WebBanking.WebAPI
             app.UseSimpleTokenProvider(new TokenProviderOptions
             {
                 Path = "/api/authenticate",
-                //Audience = "ExampleAudience",
-                //Issuer = "ExampleIssuer",
                 SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
                 IdentityResolver = GetIdentity
             });

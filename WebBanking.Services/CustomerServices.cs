@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WebBanking.Model;
+﻿using WebBanking.Model;
 using WebBanking.DAL;
 
 namespace WebBanking.Services

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace WebBanking.Model
+﻿namespace WebBanking.Model
 {
     public partial class Bank
     {

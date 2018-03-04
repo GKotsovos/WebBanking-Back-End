@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.IO;
 
 namespace WebBanking.TokenProvider
 {
@@ -75,9 +74,6 @@ namespace WebBanking.TokenProvider
             if (identity == null)
             {
                 context.Response.StatusCode = 401;
-                //context.Response.ContentType = "application/json";
-                //context.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:3000");
-                //await context.Response.WriteAsync("Λάθος ID χρήστη ή κωδικός.");
                 return;
             }
 
@@ -90,13 +86,10 @@ namespace WebBanking.TokenProvider
                 new Claim(JwtRegisteredClaimNames.Sub, userId),
                 identity.FindFirst("custId"),
                 new Claim(JwtRegisteredClaimNames.Jti, await _options.NonceGenerator()),
-                //new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64)
             };
 
             // Create the JWT and write it to a string
             var jwt = new JwtSecurityToken(
-                //issuer: _options.Issuer,
-                //audience: _options.Audience,
                 claims: claims,
                 notBefore: now,
                 expires: now.Add(_options.Expiration),
@@ -109,9 +102,6 @@ namespace WebBanking.TokenProvider
                 expires_in = (int)_options.Expiration.TotalSeconds
             };
             
-            // Serialize and return the response
-            //context.Response.ContentType = "application/json";
-            //context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             await context.Response.WriteAsync(JsonConvert.SerializeObject(response, _serializerSettings));
         }
 
@@ -121,17 +111,7 @@ namespace WebBanking.TokenProvider
             {
                 throw new ArgumentNullException(nameof(TokenProviderOptions.Path));
             }
-
-            //if (string.IsNullOrEmpty(options.Issuer))
-            //{
-            //    throw new ArgumentNullException(nameof(TokenProviderOptions.Issuer));
-            //}
-
-            //if (string.IsNullOrEmpty(options.Audience))
-            //{
-            //    throw new ArgumentNullException(nameof(TokenProviderOptions.Audience));
-            //}
-
+            
             if (options.Expiration == TimeSpan.Zero)
             {
                 throw new ArgumentException("Must be a non-zero TimeSpan.", nameof(TokenProviderOptions.Expiration));

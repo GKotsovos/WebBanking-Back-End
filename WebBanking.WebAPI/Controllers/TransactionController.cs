@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebBanking.Model;
@@ -30,7 +29,6 @@ namespace WebBanking.WebAPI.Controllers
         [HttpPost("GetProductTransactionHistoryByTimePeriod")]
         public List<Transaction> GetProductTransactionsByTimePeriod(string productId, DateTime startDate, DateTime endDate)
         {
-
             return transactionServices.GetProductTransactionsByTimePeriod(productId, startDate, endDate);
         }
 
