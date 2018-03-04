@@ -43,7 +43,7 @@ namespace WebBanking.WebAPI.Controllers
         public void CancelTransferOrder(long transferOrderId, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = orderServices.CancelTransferOrder(GetCustomerId(), transferOrderId, language);
+            transactionResult = orderServices.CancelTransferOrder(transferOrderId, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);
@@ -72,7 +72,7 @@ namespace WebBanking.WebAPI.Controllers
         public void CancelPaymentOrder(long paymentOrderId, string language)
         {
             TransactionResult transactionResult;
-            transactionResult = orderServices.CancelPaymentOrder(GetCustomerId(), paymentOrderId, language);
+            transactionResult = orderServices.CancelPaymentOrder(paymentOrderId, language);
             if (transactionResult.HasError)
             {
                 ReturnErrorResponse(transactionResult.Message);

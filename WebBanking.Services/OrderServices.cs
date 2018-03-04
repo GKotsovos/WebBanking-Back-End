@@ -43,7 +43,7 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult CancelTransferOrder(string customerId, long transferOrderId, string language)
+        public TransactionResult CancelTransferOrder(long transferOrderId, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             try
@@ -78,6 +78,7 @@ namespace WebBanking.Services
             try
             {
                 orderManager.InsertPaymentOrder(paymentOrder);
+                throw new Exception("");
             }
             catch (Exception)
             {
@@ -88,7 +89,7 @@ namespace WebBanking.Services
             return transactionResult;
         }
 
-        public TransactionResult CancelPaymentOrder(string customerId, long paymentOrderId, string language)
+        public TransactionResult CancelPaymentOrder(long paymentOrderId, string language)
         {
             var transactionResult = new TransactionResult(false, "");
             try
