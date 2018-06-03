@@ -77,7 +77,6 @@ namespace WebBanking.Services
             try
             {
                 orderManager.InsertPaymentOrder(paymentOrder);
-                throw new Exception("");
             }
             catch (Exception)
             {

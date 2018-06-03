@@ -48,8 +48,12 @@ namespace WebBanking.Services
                 }
                 if (!transactionResult.HasError)
                 {
-                    transactionServices.LogTransaction(customerId, "ΜΕΤΑΦΟΡΑ ΧΡΗΜΑΤΩΝ", debitProduct.AvailableBalance, transaction);
-                }
+                    transactionResult = helper.UpdateProduct(transaction.DebitProductType, debitProduct, language);
+                    if (!transactionResult.HasError)
+                    {
+                        transactionServices.LogTransaction(customerId, "ΜΕΤΑΦΟΡΑ ΧΡΗΜΑΤΩΝ", debitProduct.AvailableBalance, transaction);
+                    }
+                }                
             }
 
             return transactionResult;
